@@ -431,11 +431,11 @@ class MakeAddonCommand extends Command
         $tripMethods = '';
 
         if ($settingsType === 'global' || $settingsType === 'both') {
-            $globalMethods = "\n\t/**\n\t * Add Global Settings Schema.\n\t *\n\t * @param array    \$schema Schema.\n\t * @param Settings \$instance Instance of the Settings class.\n\t *\n\t * @return array\n\t */\n\tpublic function global_schema( array \$schema, Settings \$instance ): array {\n\t\t\$schema['{$data['names']['settings_key']}'] = MyGlobals::get_api_schema();\n\t\treturn \$schema;\n\t}\n\n\t/**\n\t * Prepare Global Settings.\n\t *\n\t * @param array           \$settings Settings.\n\t * @param WP_REST_Request \$request Request.\n\t * @param Settings        \$settings_controller Instance of the Settings class.\n\t *\n\t * @return array\n\t */\n\tpublic function prepare_settings( array \$settings, WP_REST_Request \$request, Settings \$settings_controller ): array {\n\t\t\$settings['{$data['names']['settings_key']}'] = MyGlobals::prepare_api_datas( \$settings_controller );\n\t\treturn \$settings;\n\t}\n\n\t/**\n\t * Update Global Settings.\n\t *\n\t * @param WP_REST_Request \$request Request.\n\t * @param Settings        \$settings_controller Instance of the Settings class.\n\t *\n\t * @return void\n\t */\n\tpublic function update_settings( WP_REST_Request \$request, Settings \$settings_controller ): void {\n\t\tif ( is_array( \$request['{$data['names']['settings_key']}'] ?? null ) ) {\n\t\t\tMyGlobals::update_api_datas( \$request['{$data['names']['settings_key']}'], \$settings_controller );\n\t\t}\n\t}\n";
+            $globalMethods = $this->generateGlobalSettingsMethods($data);
         }
 
         if ($settingsType === 'trip-edit' || $settingsType === 'both') {
-            $tripMethods = "\n\t/**\n\t * Add Trip Meta Schema.\n\t *\n\t * @param array \$properties Properties.\n\t *\n\t * @return array\n\t */\n\tpublic function trip_edit_schema( array \$properties ): array {\n\t\t\$properties['{$data['names']['settings_key']}'] = MyTripEdits::get_api_schema();\n\t\treturn \$properties;\n\t}\n\n\t/**\n\t * Prepare Trip Meta.\n\t *\n\t * @param array           \$data Data.\n\t * @param WP_REST_Request \$request Request.\n\t * @param Trip            \$controller Instance of the Trip class.\n\t *\n\t * @return array\n\t */\n\tpublic function prepare_trip_meta( array \$data, WP_REST_Request \$request, Trip \$controller ): array {\n\t\t\$data['{$data['names']['settings_key']}'] = MyTripEdits::prepare_api_datas( \$data, \$controller );\n\t\treturn \$data;\n\t}\n\n\t/**\n\t * Update Trip Meta.\n\t *\n\t * @param WP_REST_Request \$request Request.\n\t * @param Trip            \$controller Instance of the Trip class.\n\t *\n\t * @return void\n\t */\n\tpublic function update_trip_meta( WP_REST_Request \$request, Trip \$controller ): void {\n\t\tif ( is_array( \$request['{$data['names']['settings_key']}'] ?? null ) ) {\n\t\t\tMyTripEdits::update_api_datas( \$controller, \$request['{$data['names']['settings_key']}'] );\n\t\t}\n\t}\n";
+            $tripMethods = $this->generateTripEditMethods($data);
         }
 
         $stub = str_replace('{{GLOBAL_METHODS}}', $globalMethods, $stub);
@@ -573,7 +573,6 @@ class MakeAddonCommand extends Command
  * Load plugin after checking dependencies.
  */
 function wptravelengine_{$data['names']['function_slug']}_init() {
-\trequire_once __DIR__ . '/vendor/autoload.php';
 
 \t// Initialize the plugin
 \tif ( class_exists( '{$namespace}\\Plugin' ) ) {
@@ -581,6 +580,32 @@ function wptravelengine_{$data['names']['function_slug']}_init() {
 \t}
 }
 add_action( 'plugins_loaded', 'wptravelengine_{$data['names']['function_slug']}_init', 9 );";
+    }
+
+    /**
+     * Generate global settings API methods
+     *
+     * @param array $data Addon configuration data
+     * @return string Generated methods code
+     */
+    private function generateGlobalSettingsMethods(array $data): string
+    {
+        $settingsKey = $data['names']['settings_key'];
+
+        return "\n\t/**\n\t * Add Global Settings Schema.\n\t *\n\t * @param array    \$schema Schema.\n\t * @param Settings \$instance Instance of the Settings class.\n\t *\n\t * @return array\n\t */\n\tpublic function global_schema( array \$schema, Settings \$instance ): array {\n\t\t// @TODO: Add schema logic here.\n\t\t// \$schema['{$settingsKey}'] = MyGlobals::get_api_schema();\n\t\treturn \$schema;\n\t}\n\n\t/**\n\t * Prepare Global Settings.\n\t *\n\t * @param array           \$settings Settings.\n\t * @param WP_REST_Request \$request Request.\n\t * @param Settings        \$settings_controller Instance of the Settings class.\n\t *\n\t * @return array\n\t */\n\tpublic function prepare_settings( array \$settings, WP_REST_Request \$request, Settings \$settings_controller ): array {\n\t\t// @TODO: Add prepare logic here.\n\t\t// \$settings['{$settingsKey}'] = MyGlobals::prepare_api_datas( \$settings_controller );\n\t\treturn \$settings;\n\t}\n\n\t/**\n\t * Update Global Settings.\n\t *\n\t * @param WP_REST_Request \$request Request.\n\t * @param Settings        \$settings_controller Instance of the Settings class.\n\t *\n\t * @return void\n\t */\n\tpublic function update_settings( WP_REST_Request \$request, Settings \$settings_controller ): void {\n\t\t// @TODO: Add update logic here.\n\t\t// if ( is_array( \$request['{$settingsKey}'] ?? null ) ) {\n\t\t// \tMyGlobals::update_api_datas( \$request['{$settingsKey}'], \$settings_controller );\n\t\t// }\n\t}\n";
+    }
+
+    /**
+     * Generate trip edit API methods
+     *
+     * @param array $data Addon configuration data
+     * @return string Generated methods code
+     */
+    private function generateTripEditMethods(array $data): string
+    {
+        $settingsKey = $data['names']['settings_key'];
+
+        return "\n\t/**\n\t * Add Trip Meta Schema.\n\t *\n\t * @param array \$properties Properties.\n\t *\n\t * @return array\n\t */\n\tpublic function trip_edit_schema( array \$properties ): array {\n\t\t// @TODO: Add schema logic here.\n\t\t// \$properties['{$settingsKey}'] = MyTripEdits::get_api_schema();\n\t\treturn \$properties;\n\t}\n\n\t/**\n\t * Prepare Trip Meta.\n\t *\n\t * @param array           \$data Data.\n\t * @param WP_REST_Request \$request Request.\n\t * @param Trip            \$controller Instance of the Trip class.\n\t *\n\t * @return array\n\t */\n\tpublic function prepare_trip_meta( array \$data, WP_REST_Request \$request, Trip \$controller ): array {\n\t\t// @TODO: Add prepare logic here.\n\t\t// \$data['{$settingsKey}'] = MyTripEdits::prepare_api_datas( \$data, \$controller );\n\t\treturn \$data;\n\t}\n\n\t/**\n\t * Update Trip Meta.\n\t *\n\t * @param WP_REST_Request \$request Request.\n\t * @param Trip            \$controller Instance of the Trip class.\n\t *\n\t * @return void\n\t */\n\tpublic function update_trip_meta( WP_REST_Request \$request, Trip \$controller ): void {\n\t\t// @TODO: Add update logic here.\n\t\t// if ( is_array( \$request['{$settingsKey}'] ?? null ) ) {\n\t\t// \tMyTripEdits::update_api_datas( \$controller, \$request['{$settingsKey}'] );\n\t\t// }\n\t}\n";
     }
 
     /**

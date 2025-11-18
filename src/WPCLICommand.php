@@ -37,7 +37,6 @@ class WPCLICommand {
      * [--settings=<settings>]
      * : Settings type for basic addons: none, global, trip-edit, both
      * ---
-     * default: none
      * options:
      *   - none
      *   - global
