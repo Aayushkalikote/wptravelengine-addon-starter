@@ -1,0 +1,24 @@
+<?php
+/**
+ * {{ADDON_NAME}} settings.
+ *
+ * @package {{NAMESPACE}}\Builders
+ * @return array
+ * @since 1.0.0
+ */
+
+return apply_filters(
+	'{{SLUG}}_global_settings',
+	array(
+		'title'     => __( '{{ADDON_NAME}}', '{{FULL_SLUG}}' ),
+		'order'     => 10,
+		'id'        => '{{SLUG}}',
+		'is_active' => true,
+		'fields'    => array(
+			array(
+				'field_type' => 'ALERT',
+				'content'    => sprintf( __( '{{DESCRIPTION}}', '{{FULL_SLUG}}' ) ),
+			),
+		),
+	)
+);

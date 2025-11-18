@@ -1,0 +1,189 @@
+<?php
+/**
+ * Main Plugin Class for {{ADDON_NAME}}
+ *
+ * @package {{ADDON_NAME}}
+ * @since 1.0.0
+ */
+
+namespace {{NAMESPACE}};
+
+use {{NAMESPACE}}\Builders\API;
+
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * Plugin Class.
+ */
+class Plugin {
+
+	/**
+	 * Plugin instance.
+	 *
+	 * @var ?Plugin
+	 */
+	protected static $instance = null;
+
+	/**
+	 * Get plugin instance.
+	 *
+	 * @return Plugin
+	 */
+	public static function instance(): Plugin {
+		if ( is_null( self::$instance ) ) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
+
+	/**
+	 * Constructor.
+	 */
+	private function __construct() {
+		$this->init_hooks();
+	}
+
+	/**
+	 * Initialize hooks.
+	 */
+	private function init_hooks(): void {
+		// Load text domain
+		add_action( 'init', array( $this, 'load_textdomain' ) );
+
+		// Payment gateway registration
+		add_action( 'wptravelengine_registering_payment_gateways', array( $this, 'register_payment_gateway' ) );
+		add_filter( 'wptravelengine_rest_payment_gateways', array( $this, 'add_gateway_to_list' ), 10, 2 );
+
+		// Frontend integration
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+
+		// Payment form display
+		add_action( 'wptravelengine_{{GATEWAY_ID_ENABLE}}_payment_cc', array( $this, 'print_payment_form' ) );
+
+		// Checkout button customization
+		add_filter( 'wptravelengine_checkout_{{GATEWAY_ID_ENABLE}}_button', array( $this, 'print_checkout_button' ), 10, 2 );
+
+		// Global settings integration
+		add_filter( 'wptravelengine_settings:tabs:payments', array( $this, 'add_global_settings' ) );
+
+		// REST API integration
+		API::instance();
+	}
+
+	/**
+	 * Load plugin textdomain.
+	 */
+	public function load_textdomain(): void {
+		load_plugin_textdomain(
+			'{{SLUG}}',
+			false,
+			dirname( plugin_basename( {{CONSTANT}}_FILE_PATH ) ) . '/languages/'
+		);
+	}
+
+	/**
+	 * Register payment gateway.
+	 *
+	 * @param array $gateways Payment gateways.
+	 * @return array
+	 */
+	public function register_payment_gateway( array $gateways ): array {
+		$gateways['{{GATEWAY_ID}}'] = new Payment();
+		return $gateways;
+	}
+
+	/**
+	 * Add payment gateway to REST API list.
+	 *
+	 * @param array  $gateways Gateways.
+	 * @param object $plugin_settings Plugin settings.
+	 * @return array
+	 */
+	public function add_gateway_to_list( array $gateways, $plugin_settings ): array {
+		$gateways[] = array(
+			'id'     => '{{GATEWAY_ID_ENABLE}}',
+			'name'   => __( '{{ADDON_NAME}}', '{{SLUG}}' ),
+			'enable' => wptravelengine_toggled( $plugin_settings->get( '{{GATEWAY_ID_ENABLE}}' ) ),
+			'icon'   => '',
+		);
+		return $gateways;
+	}
+
+	/**
+	 * Enqueue frontend scripts and styles.
+	 */
+	public function enqueue_scripts(): void {
+		// Only load on checkout page
+		if ( ! function_exists( 'wp_travel_engine_is_checkout_page' ) || ! wp_travel_engine_is_checkout_page() ) {
+			return;
+		}
+
+		$settings = function_exists( 'wptravelengine_settings' ) ? wptravelengine_settings()->get() : array();
+		$enabled  = wptravelengine_toggled( $settings['{{GATEWAY_ID_ENABLE}}'] ?? false );
+
+		if ( ! $enabled ) {
+			return;
+		}
+
+		// TODO: Enqueue your payment gateway scripts/styles here
+		/*
+		wp_enqueue_script(
+			'{{SLUG}}-handler',
+			{{CONSTANT}}_DIR_URL . 'assets/js/payment-handler.js',
+			array( 'jquery' ),
+			'1.0.0',
+			true
+		);
+
+		wp_localize_script(
+			'{{SLUG}}-handler',
+			'{{GATEWAY_ID}}Data',
+			array(
+				'ajax_url' => admin_url( 'admin-ajax.php' ),
+				'nonce'    => wp_create_nonce( '{{GATEWAY_ID}}_nonce' ),
+			)
+		);
+		*/
+	}
+
+	/**
+	 * Print payment form on checkout page.
+	 */
+	public function print_payment_form(): void {
+		?>
+		<div class="wpte-checkout__payment-cc-placeholder">
+			<!-- TODO: Add your payment form HTML here -->
+			<div id="{{SLUG}}-payment-form">
+				<?php esc_html_e( 'Payment form will be displayed here.', '{{SLUG}}' ); ?>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Print checkout button.
+	 *
+	 * @return string
+	 */
+	public function print_checkout_button(): string {
+		// TODO: Get label from settings when implemented
+		// $settings = wptravelengine_settings()->get();
+		// $label = $settings['{{GATEWAY_ID}}']['gateway_label'] ?? __( '{{ADDON_NAME}}', '{{SLUG}}' );
+		$label = __( '{{ADDON_NAME}}', '{{SLUG}}' );
+		return '<button class="wpte-checkout__form-submit-button">' . esc_html( $label ) . '</button>';
+	}
+
+	/**
+	 * Add global settings tab.
+	 *
+	 * @param array $tab_settings Tab settings.
+	 * @return array
+	 */
+	public function add_global_settings( array $tab_settings ): array {
+		$builder = {{CONSTANT}}_DIR_PATH . 'includes/Builders/global-settings.php';
+		if ( file_exists( $builder ) ) {
+			$tab_settings['sub_tabs'][] = require $builder;
+		}
+		return $tab_settings;
+	}
+}

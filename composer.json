@@ -1,0 +1,43 @@
+{
+    "name": "wptravelengine/addonstarter",
+    "description": "Composer Package to scaffold WP Travel Engine addon plugins with customizable setup options.",
+    "type": "wp-cli-package",
+    "license": "GPL-3.0-or-later",
+    "homepage": "https://github.com/Aayushkalikote/wptravelengine-addon-starter",
+    "support": {
+        "issues": "https://github.com/Aayushkalikote/wptravelengine-addon-starter/issues",
+        "source": "https://github.com/Aayushkalikote/wptravelengine-addon-starter"
+    },
+    "authors": [
+        {
+            "name": "WP Travel Engine",
+            "email": "info@wptravelengine.com",
+            "homepage": "https://wptravelengine.com"
+        }
+    ],
+    "bin": ["bin/wptravelengine-addon-starter"],
+    "autoload": {
+        "psr-4": {
+            "WPTravelEngine\\AddonStarter\\": "src/"
+        },
+        "files": ["command.php"]
+    },
+    "require": {
+        "php": ">=7.4",
+        "symfony/console": "^5.4",
+        "symfony/filesystem": "^5.4",
+        "wp-cli/wp-cli": "^2.5"
+    },
+    "extra": {
+        "commands": [
+            "WPTravelEngine\\AddonStarter\\WPCLICommand"
+        ]
+    },
+    "keywords": [
+        "wordpress",
+        "wp-travel-engine",
+        "scaffolder",
+        "generator",
+        "payment-gateway"
+    ]
+}

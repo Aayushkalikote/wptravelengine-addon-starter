@@ -1,0 +1,8 @@
+/**
+ * Admin JavaScript for {{ADDON_NAME}}
+ *
+ * @package {{NAMESPACE}}
+ */
+
+// Add your admin JavaScript code here
+console.log('{{ADDON_NAME}} admin script loaded');

@@ -1,0 +1,21 @@
+const path = require('path')
+const config = require('@wordpress/scripts/config/webpack.config')
+
+module.exports = {
+	...config,
+	mode: 'development',
+	entry: {
+	},
+	output: {
+		filename: "[name].js",
+		path: path.resolve(__dirname, 'dist'),
+	},
+	externals: {
+        //Use Required WP Travel Engine Admin Components as you required.
+		'@wptravelengine/admin/components': 'window.wptravelengine.adminComponents',
+		'@wptravelengine/admin/helpers': 'window.wptravelengine.adminHelpers',
+		'@wptravelengine/admin/wrappers': 'window.wptravelengine.adminWrappers',
+		'@wptravelengine/admin/reactHookForm': 'window.wptravelengine.reactHookForm',
+		'@wptravelengine/admin/style': 'window.wptravelengine.adminStyle',
+	},
+}

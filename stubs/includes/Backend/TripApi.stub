@@ -1,0 +1,75 @@
+<?php
+/**
+ * Handles the Trip settings API functionality for the {{ADDON_NAME}} plugin.
+ *
+ * This class manages the API endpoints for the {{ADDON_NAME}} plugin,
+ * including registration of routes, permission checks, and data retrieval.
+ *
+ * @package {{NAMESPACE}}\Backend
+ * @since 1.0.0
+ */
+namespace {{NAMESPACE}}\Backend;
+
+use WP_REST_Request;
+use {{NAMESPACE}}\Settings\TripEdits as MyTripEdits;
+use WPTravelEngine\Core\Controllers\RestAPI\V2\Trip;
+
+/**
+ * Trip API class.
+ *
+ * @since 1.0.0
+ */
+class TripApi {
+
+	/**
+	 * Register hooks.
+	 *
+	 * @return void
+	 */
+	public static function register_hooks(): void {
+		$instance = new self();
+		add_filter( 'wptravelengine_trip_api_schema', array( $instance, 'trip_edit_schema' ), 10, 2 );
+		add_filter( 'wptravelengine_rest_prepare_trip', array( $instance, 'prepare_trip_meta' ), 10, 3 );
+		add_action( 'wptravelengine_api_update_trip', array( $instance, 'update_trip_meta' ), 10, 2 );
+	}
+
+	/**
+	 * Add {{ADDON_NAME}} Trip Meta Schema.
+	 *
+	 * @param array $properties Properties.
+	 *
+	 * @return array
+	 */
+	public function trip_edit_schema( array $properties ): array {
+		$properties['{{SLUG}}'] = MyTripEdits::get_api_schema();
+		return $properties;
+	}
+
+	/**
+	 * Prepare {{ADDON_NAME}} Trip Meta.
+	 *
+	 * @param array           $data Data.
+	 * @param WP_REST_Request $request Request.
+	 * @param Trip            $controller Instance of the Trip class.
+	 *
+	 * @return array
+	 */
+	public function prepare_trip_meta( array $data, WP_REST_Request $request, Trip $controller ): array {
+		$data['{{SLUG}}'] = MyTripEdits::prepare_api_datas( $data, $controller );
+		return $data;
+	}
+
+	/**
+	 * Update {{ADDON_NAME}} Trip Meta.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @param Trip            $controller Instance of the Trip class.
+	 *
+	 * @return void {{ADDON_NAME}}
+	 */
+	public function update_trip_meta( WP_REST_Request $request, Trip $controller ): void {
+		if ( is_array( $request['{{SLUG}}'] ?? null ) ) {
+			MyTripEdits::update_api_datas( $controller, $request['{{SLUG}}'] );
+		}
+	}
+}

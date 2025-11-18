@@ -1,0 +1,25 @@
+<?php
+/**
+ * Plugin Name: WP Travel Engine - {{ADDON_NAME}}
+ * Plugin URI: https://wp-travel-engine.com
+ * Description: {{DESCRIPTION}}
+ * Version: 1.0.0
+ * Author: WP Travel Engine
+ * Author URI: https://wp-travel-engine.com
+ * Text Domain: {{FULL_SLUG}}
+ * Requires at least: 6.3.9
+ * Requires Plugin: wp-travel-engine
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+define( 'WPTRAVELENGINE_{{CONSTANT}}_PATH', __DIR__ );
+define( 'WPTRAVELENGINE_{{CONSTANT}}_DIR_URL', plugin_dir_url( __FILE__ ) );
+define( 'WPTRAVELENGINE_{{CONSTANT}}_DIR_PATH', plugin_dir_path( __FILE__ ) );
+define( 'WPTRAVELENGINE_{{CONSTANT}}_VERSION', '1.0.0' );
+
+require plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
+
+{{PRO_COMPATIBLE_BLOCK}}

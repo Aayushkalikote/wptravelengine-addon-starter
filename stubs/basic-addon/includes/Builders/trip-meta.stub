@@ -1,0 +1,27 @@
+<?php
+/**
+ * {{ADDON_NAME}} trip meta tab.
+ *
+ * @package {{NAMESPACE}}\Builders
+ * @return array
+ * @since 1.0.0
+ */
+
+return array(
+	'tab_label'         => __( '{{ADDON_NAME}}', '{{FULL_SLUG}}' ),
+	'tab_heading'       => __( '{{DESCRIPTION}}', '{{FULL_SLUG}}' ),
+	'callback_function' => 'wptravelengine_trip_edit_tab_{{SLUG}}',
+	'content_key'       => '{{SLUG}}',
+	'current'           => false,
+	'content_loaded'    => false,
+	'priority'          => 122,
+	'icon'              => 'info',
+	'fields'            => array(
+		array(
+			'field' => array(
+				'type'    => 'ALERT',
+				'content' => __( '{{DESCRIPTION}}', '{{FULL_SLUG}}' ),
+			),
+		),
+	),
+);

@@ -1,0 +1,44 @@
+<?php
+/**
+ * {{ADDON_NAME}} Settings.
+ *
+ * @since 1.0.0
+ */
+return apply_filters(
+	'{{GATEWAY_ID}}_payment',
+	array(
+		'title'  => __( '{{ADDON_NAME}}', '{{SLUG}}' ),
+		'order'  => 10,
+		'id'     => '{{GATEWAY_ID}}_payment',
+		'fields' => array(
+			array(
+				'field_type' => 'DEBUG_MODE',
+				'name'       => 'debug_mode',
+			),
+			array(
+				'label'      => __( 'Payment Gateway Label', '{{SLUG}}' ),
+				'help'       => __( 'Enter the payment gateway label to display to customers.', '{{SLUG}}' ),
+				'field_type' => 'TEXT',
+				'name'       => '{{GATEWAY_ID}}.gateway_label',
+				'default'    => __( '{{ADDON_NAME}}', '{{SLUG}}' ),
+			),
+			// TODO: Add your payment gateway credential fields here
+			/*
+			array(
+				'label'      => __( 'API Key', '{{SLUG}}' ),
+				'help'       => __( 'Enter your API key from your payment gateway dashboard.', '{{SLUG}}' ),
+				'field_type' => 'TEXT',
+				'name'       => '{{GATEWAY_ID}}.api_key',
+				'default'    => '',
+			),
+			array(
+				'label'      => __( 'Secret Key', '{{SLUG}}' ),
+				'help'       => __( 'Enter your secret key for API authentication.', '{{SLUG}}' ),
+				'field_type' => 'TEXT',
+				'name'       => '{{GATEWAY_ID}}.secret_key',
+				'default'    => '',
+			),
+			*/
+		),
+	)
+);

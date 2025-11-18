@@ -1,0 +1,175 @@
+<?php
+/**
+ * Payment Gateway Class
+ *
+ * @package {{ADDON_NAME}}
+ * @since 1.0.0
+ */
+
+namespace {{NAMESPACE}};
+
+use WPTravelEngine\PaymentGateways\BaseGateway;
+
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * {{ADDON_NAME}} Payment Gateway.
+ */
+class Payment extends BaseGateway {
+
+	/**
+	 * Gateway ID
+	 *
+	 * @var string
+	 */
+	protected $gateway_id = '{{GATEWAY_ID_ENABLE}}';
+
+	/**
+	 * Plugin settings.
+	 *
+	 * @var array
+	 */
+	private $settings;
+
+	/**
+	 * Constructor.
+	 */
+	public function __construct() {
+		// Get plugin settings
+		// TODO: Implement settings retrieval when global settings are added
+		// $this->settings = get_option( 'wp_travel_engine_settings', array() );
+		$this->settings = array();
+	}
+
+	/**
+	 * Get gateway ID.
+	 *
+	 * @return string
+	 */
+	public function get_gateway_id(): string {
+		return $this->gateway_id;
+	}
+
+	/**
+	 * Get gateway label (admin).
+	 *
+	 * @return string
+	 */
+	public function get_label(): string {
+		// TODO: Get label from settings when implemented
+		// return $this->settings['{{GATEWAY_ID}}']['gateway_label'] ?? '{{ADDON_NAME}}';
+		return '{{ADDON_NAME}}';
+	}
+
+	/**
+	 * Get gateway public label (customer-facing).
+	 *
+	 * @return string
+	 */
+	public function get_public_label(): string {
+		return $this->get_label();
+	}
+
+	/**
+	 * Process payment.
+	 *
+	 * This is the main payment processing method called when a booking is made.
+	 *
+	 * @param int   $booking_id Booking ID.
+	 * @param array $form_data  Form data from checkout.
+	 * @return array Response data.
+	 */
+	public function process_payment_v2( int $booking_id, array $form_data ): array {
+		// TODO: Implement payment processing logic
+
+		// Example response structure:
+		return array(
+			'success' => false,
+			'message' => __( 'Payment processing not yet implemented.', '{{SLUG}}' ),
+		);
+
+		/*
+		 * Example implementation:
+		 *
+		 * 1. Get booking details
+		 * $booking = new \WPTravelEngine\Booking( $booking_id );
+		 * $payment = $booking->get_payment();
+		 *
+		 * 2. Prepare payment data
+		 * $amount = $payment->get_total();
+		 * $currency = $payment->get_currency();
+		 *
+		 * 3. Call payment gateway API
+		 * $response = $this->create_payment( $amount, $currency, $form_data );
+		 *
+		 * 4. Store transaction data
+		 * set_transient( '{{GATEWAY_ID}}_' . $booking_id, $transaction_data, 30 * MINUTE_IN_SECONDS );
+		 *
+		 * 5. Return success with token/URL
+		 * return array(
+		 *     'success' => true,
+		 *     'token'   => $response['formToken'],
+		 *     'url'     => home_url( '/booking/confirmation/' ),
+		 * );
+		 */
+	}
+
+	/**
+	 * Handle payment notification/webhook.
+	 *
+	 * Called when the payment gateway sends a notification about payment status.
+	 *
+	 * @param array $request Request data.
+	 * @return void
+	 */
+	public function handle_notification_request( array $request ): void {
+		// TODO: Implement webhook/IPN handling
+
+		/*
+		 * Example implementation:
+		 *
+		 * 1. Verify signature/authenticity
+		 * if ( ! $this->verify_signature( $request ) ) {
+		 *     wp_send_json_error( 'Invalid signature' );
+		 * }
+		 *
+		 * 2. Extract transaction data
+		 * $transaction_id = $request['transaction_id'];
+		 * $status = $request['status'];
+		 *
+		 * 3. Get booking from stored data
+		 * $stored_data = get_transient( '{{GATEWAY_ID}}_' . $booking_id );
+		 * $booking = new \WPTravelEngine\Booking( $booking_id );
+		 * $payment = $booking->get_payment();
+		 *
+		 * 4. Update payment status
+		 * if ( $status === 'PAID' ) {
+		 *     $payment->sync_payment_success_metas();
+		 *     wptravelengine_send_booking_emails( $booking_id );
+		 * } else {
+		 *     $payment->sync_payment_failed_metas();
+		 * }
+		 *
+		 * 5. Send response
+		 * wp_send_json_success( 'Payment processed' );
+		 */
+	}
+
+	/**
+	 * Get callback URL for payment notifications.
+	 *
+	 * @param string $payment_key Payment key.
+	 * @param string $callback_type Type of callback (notification, success, failure).
+	 * @return string
+	 */
+	protected function get_callback_url( string $payment_key, string $callback_type = 'notification' ): string {
+		return add_query_arg(
+			array(
+				'action'        => 'wte_payment_gateway_callback',
+				'payment_key'   => $payment_key,
+				'callback_type' => $callback_type,
+			),
+			admin_url( 'admin-ajax.php' )
+		);
+	}
+}

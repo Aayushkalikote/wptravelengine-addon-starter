@@ -1,0 +1,20 @@
+{
+    "name": "{{FULL_SLUG}}",
+    "version": "1.0.0",
+    "description": "{{DESCRIPTION}}",
+    "main": "{{FULL_SLUG}}.php",
+    "repository": "https://github.com/Codewing-Solutions/{{FULL_SLUG}}",
+    "author": "wptravelengine",
+    "license": "GPL-3.0-or-later",
+    "scripts": {{{WEBPACK_SCRIPTS}}
+        "i18n": "npx grunt addtextdomain && wp i18n make-pot . ./languages/{{FULL_SLUG}}.pot --exclude=vendor,node_modules,assets,src,languages,dist/bundle,dist/admin --allow-root && cp ./languages/{{FULL_SLUG}}.pot ./languages/{{FULL_SLUG}}.po && wp i18n make-json ./languages --allow-root",
+        "bundle": "composer install --no-dev --optimize-autoloader{{WEBPACK_BUILD}} && npx grunt bundle"
+    },
+    "devDependencies": {{{WEBPACK_DEV_DEPENDENCIES}}
+        "grunt": "^1.6.1",
+        "grunt-contrib-clean": "^2.0.1",
+        "grunt-contrib-compress": "^2.0.0",
+        "grunt-contrib-copy": "^1.0.0",
+        "grunt-wp-i18n": "^1.0.3"
+    }{{WEBPACK_DEPENDENCIES}}
+}

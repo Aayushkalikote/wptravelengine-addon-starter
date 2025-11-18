@@ -1,0 +1,40 @@
+# Version control
+.git
+.gitignore
+.github
+
+# Build tools
+node_modules
+vendor
+composer.json
+composer.lock
+package.json
+package-lock.json
+webpack.config.js
+
+# Development files
+*.log
+.DS_Store
+Thumbs.db
+phpunit.xml
+phpcs.xml
+.phpcs.xml
+.phpcs.xml.dist
+
+# Documentation (if not needed in release)
+README.md
+CHANGELOG.md
+CONTRIBUTING.md
+
+# Tests
+tests
+test
+*.test.php
+phpunit.xml.dist
+
+# Other
+*.zip
+build
+.editorconfig
+.eslintrc
+.prettierrc

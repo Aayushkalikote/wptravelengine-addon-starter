@@ -1,0 +1,76 @@
+<?php
+/**
+ * Handles the global settings API functionality for the {{ADDON_NAME}} plugin.
+ *
+ * This class manages the API endpoints for the {{ADDON_NAME}} plugin,
+ * including registration of routes, permission checks, and data retrieval.
+ *
+ * @package {{NAMESPACE}}\Backend
+ * @since 1.0.0
+ */
+namespace {{NAMESPACE}}\Backend;
+
+use WP_REST_Request;
+use WPTravelEngine\Core\Controllers\RestAPI\V2\Settings;
+use {{NAMESPACE}}\Settings\Globals as MyGlobals;
+
+/**
+ * GlobalApi class.
+ *
+ * @since 1.0.0
+ */
+class GlobalApi {
+
+	/**
+	 * Register hooks.
+	 *
+	 * @return void
+	 */
+	public static function register_hooks(): void {
+		$instance = new self();
+		add_filter( 'wptravelengine_settings_api_schema', array( $instance, 'global_schema' ), 10, 2 );
+		add_filter( 'wptravelengine_rest_prepare_settings', array( $instance, 'prepare_settings' ), 10, 3 );
+		add_action( 'wptravelengine_api_update_settings', array( $instance, 'update_settings' ), 10, 2 );
+	}
+
+	/**
+	 * Add {{ADDON_NAME}} Global Settings Schema.
+	 *
+	 * @param array    $schema Schema.
+	 * @param Settings $instance Instance of the Settings class.
+	 *
+	 * @return array
+	 */
+	public function global_schema( array $schema, Settings $instance ): array {
+		$schema['{{SLUG}}'] = MyGlobals::get_api_schema();
+		return $schema;
+	}
+
+	/**
+	 * Prepare {{ADDON_NAME}} Global Settings.
+	 *
+	 * @param array           $settings Settings.
+	 * @param WP_REST_Request $request Request.
+	 * @param Settings        $settings_controller Instance of the Settings class.
+	 *
+	 * @return array
+	 */
+	public function prepare_settings( array $settings, WP_REST_Request $request, Settings $settings_controller ): array {
+		$settings['{{SLUG}}'] = MyGlobals::prepare_api_datas( $settings_controller );
+		return $settings;
+	}
+
+	/**
+	 * Update {{ADDON_NAME}} Global Settings.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @param Settings        $settings_controller Instance of the Settings class.
+	 *
+	 * @return void
+	 */
+	public function update_settings( WP_REST_Request $request, Settings $settings_controller ): void {
+		if ( is_array( $request['{{SLUG}}'] ?? null ) ) {
+			MyGlobals::update_api_datas( $request['{{SLUG}}'], $settings_controller );
+		}
+	}
+}

@@ -1,0 +1,38 @@
+=== WP Travel Engine - {{ADDON_NAME}} ===
+Contributors: wptravelengine
+Tags: travel, tour, booking, trip
+Requires at least: 5.9
+Tested up to: 6.4
+Stable tag: 1.0.0
+Requires PHP: 7.4
+License: GPLv3 or later
+License URI: http://www.gnu.org/licenses/gpl-3.0.html
+
+{{DESCRIPTION}}
+
+== Description ==
+
+{{DESCRIPTION}}
+
+This addon extends WP Travel Engine with additional functionality for {{ADDON_NAME}}.
+
+== Installation ==
+
+1. Upload the plugin files to the `/wp-content/plugins/{{FULL_SLUG}}` directory, or install the plugin through the WordPress plugins screen directly.
+2. Activate the plugin through the 'Plugins' screen in WordPress.
+3. Make sure WP Travel Engine plugin is installed and activated.
+
+== Frequently Asked Questions ==
+
+= What is required for this plugin to work? =
+
+This plugin requires WP Travel Engine to be installed and activated.
+
+= How do I configure this addon? =
+
+Once activated, you can configure the addon from WP Travel Engine > Settings.
+
+== Changelog ==
+
+= 1.0.0 =
+* Initial release

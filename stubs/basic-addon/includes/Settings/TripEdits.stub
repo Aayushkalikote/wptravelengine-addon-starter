@@ -1,0 +1,65 @@
+<?php
+/**
+ * Handles trip edit settings for the {{ADDON_NAME}} plugin.
+ *
+ * This class provides methods to retrieve and update trip edit settings for the
+ * {{ADDON_NAME}} plugin.
+ *
+ * @package {{NAMESPACE}}\Settings
+ * @since 1.0.0
+ */
+namespace {{NAMESPACE}}\Settings;
+
+use WPTravelEngine\Core\Controllers\RestAPI\V2\Trip;
+
+/**
+ * Trip Edit Settings Class.
+ */
+final class TripEdits {
+
+	/**
+	 * Get trip {{SLUG}} data.
+	 *
+	 * @param int $trip_id Trip ID.
+	 * @return array Trip data.
+	 */
+	public static function wptravelengine_trip_{{FUNCTION_SLUG}}_data( int $trip_id ): array {
+		// @TODO: Add get logic here.
+		return array();
+	}
+
+	/**
+	 * Update trip edit data.
+	 *
+	 * @param Trip  $controller Controller.
+	 * @param array $data Data.
+	 *
+	 * @return void
+	 */
+	public static function update_api_datas( Trip $controller, array $data ): void {
+		// @TODO: Add update logic here.
+	}
+
+	/**
+	 * Get trip data for API.
+	 *
+	 * @param array $data Data.
+	 * @param Trip  $controller Controller.
+	 *
+	 * @return array
+	 */
+	public static function prepare_api_datas( array $data, Trip $controller ): array {
+		// @TODO: Add prepare logic here.
+		return array();
+	}
+
+	/**
+	 * Get trip edit schema.
+	 *
+	 * @return array
+	 */
+	public static function get_api_schema(): array {
+		// @TODO: Add get schema logic here.
+		return array();
+	}
+}

@@ -1,0 +1,63 @@
+<?php
+/**
+ * Plugin Name: WP Travel Engine - {{ADDON_NAME}}
+ * Description: {{DESCRIPTION}}
+ * Version: 1.0.0
+ * Author: WP Travel Engine
+ * Author URI: https://wptravelengine.com
+ * Requires at least: 5.9
+ * Tested up to: 6.4
+ * Requires PHP: 7.4
+ * WTE requires at least: 6.0.0
+ * Text Domain: {{FULL_SLUG}}
+ * Domain Path: /languages
+ */
+
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+define( 'WPTRAVELENGINE_{{CONSTANT}}_VERSION', '1.0.0' );
+define( 'WPTRAVELENGINE_{{CONSTANT}}_FILE_PATH', __FILE__ );
+
+/**
+ * Check if WP Travel Engine is active and meets version requirements.
+ *
+ * @return bool
+ */
+function wptravelengine_{{FUNCTION_SLUG}}_check_compatibility() {
+	if ( ! defined( 'WP_TRAVEL_ENGINE_VERSION' ) ) {
+		add_action( 'admin_notices', 'wptravelengine_{{FUNCTION_SLUG}}_admin_notice' );
+		return false;
+	}
+
+	// Check minimum version requirement
+	if ( version_compare( WP_TRAVEL_ENGINE_VERSION, '6.7.0', '<' ) ) {
+		add_action( 'admin_notices', 'wptravelengine_{{FUNCTION_SLUG}}_admin_notice' );
+		return false;
+	}
+
+	return true;
+}
+
+/**
+ * Display admin notice if WP Travel Engine is not active.
+ */
+function wptravelengine_{{FUNCTION_SLUG}}_admin_notice() {
+	?>
+	<div class="notice notice-error">
+		<p>
+			<?php
+			printf(
+				/* translators: %s: WP Travel Engine plugin link */
+				esc_html__( 'WP Travel Engine - {{ADDON_NAME}} requires %s to be installed and activated.', '{{FULL_SLUG}}' ),
+				'<a href="https://wordpress.org/plugins/wp-travel-engine/" target="_blank">' . esc_html__( 'WP Travel Engine Version 6.7.0 or higher', '{{FULL_SLUG}}' ) . '</a>'
+			);
+			?>
+		</p>
+	</div>
+	<?php
+}
+
+{{PRO_COMPATIBLE_BLOCK}}

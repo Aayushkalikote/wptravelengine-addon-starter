@@ -1,0 +1,161 @@
+<?php
+/**
+ * API class for WP Travel Engine - {{ADDON_NAME}}
+ *
+ * @since 1.0.0
+ * @package WP Travel Engine - {{ADDON_NAME}}
+ */
+
+namespace {{NAMESPACE}}\Builders;
+
+use WP_REST_Request;
+use WPTravelEngine\Core\Controllers\RestAPI\V2\Settings;
+use WPTravelEngine\Core\Models\Settings\PluginSettings;
+
+/**
+ * API class.
+ *
+ * Handles REST API integration for payment gateway settings.
+ *
+ * @since 1.0.0
+ */
+class API {
+
+	/**
+	 * Instance of self.
+	 *
+	 * @var self
+	 */
+	private static $instance;
+
+	/**
+	 * Plugin settings object.
+	 *
+	 * @var PluginSettings
+	 */
+	protected PluginSettings $plugin_settings;
+
+	/**
+	 * Initialize.
+	 *
+	 * @return self
+	 */
+	public static function instance() {
+		if ( is_null( self::$instance ) || ! ( self::$instance instanceof self ) ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
+
+	/**
+	 * Constructor.
+	 *
+	 * @return void
+	 */
+	public function __construct() {
+		$this->plugin_settings = new PluginSettings();
+		$this->register_hooks();
+	}
+
+	/**
+	 * Register hooks.
+	 *
+	 * @return void
+	 */
+	private function register_hooks() {
+		// REST API integration.
+		add_filter( 'wptravelengine_settings_api_schema', array( $this, 'add_settings_schema' ), 10, 2 );
+		add_filter( 'wptravelengine_rest_prepare_settings', array( $this, 'prepare_settings' ), 10, 3 );
+		add_action( 'wptravelengine_api_update_settings', array( $this, 'update_settings' ), 10, 2 );
+	}
+
+	/**
+	 * Add settings schema.
+	 *
+	 * Defines the REST API schema for payment gateway settings.
+	 *
+	 * @param array    $schema Schema.
+	 * @param Settings $instance Instance of the Settings class.
+	 *
+	 * @return array
+	 */
+	public function add_settings_schema( array $schema, $instance ): array {
+		$schema['{{SETTINGS_KEY}}'] = array(
+			'description' => __( '{{TITLE}}', '{{FULL_SLUG}}' ),
+			'type'        => 'object',
+			'properties'  => array(
+				'gateway_label' => array(
+					'description' => __( 'Gateway Label', '{{FULL_SLUG}}' ),
+					'type'        => 'string',
+				),
+				'public_key'   => array(
+					'description' => __( 'Public Key', '{{FULL_SLUG}}' ),
+					'type'        => 'string',
+				),
+				'secret_key'   => array(
+					'description' => __( 'Secret Key', '{{FULL_SLUG}}' ),
+					'type'        => 'string',
+				),
+			),
+		);
+
+		return $schema;
+	}
+
+	/**
+	 * Prepare settings.
+	 *
+	 * Formats settings data for REST API responses.
+	 *
+	 * @param array           $data     Settings data.
+	 * @param WP_REST_Request $request  Request.
+	 * @param Settings        $instance Instance of the Settings class.
+	 *
+	 * @return array
+	 */
+	public function prepare_settings( $data, $request, $instance ) {
+		$this->plugin_settings = $instance->plugin_settings;
+		$data['{{SETTINGS_KEY}}']      = array(
+			'gateway_label' => $this->plugin_settings->get( '{{SETTINGS_KEY}}.gateway_label', __( '{{TITLE}}', '{{FULL_SLUG}}' ) ),
+			'public_key'   => $this->plugin_settings->get( '{{SETTINGS_KEY}}.public_key' ),
+			'secret_key'   => $this->plugin_settings->get( '{{SETTINGS_KEY}}.secret_key' ),
+		);
+
+		return $data;
+	}
+
+	/**
+	 * Update settings.
+	 *
+	 * Handles settings updates from REST API requests.
+	 *
+	 * @param WP_REST_Request $request  Request.
+	 * @param Settings        $instance Instance of the Settings class.
+	 *
+	 * @return void
+	 */
+	public function update_settings( WP_REST_Request $request, $instance ) {
+		$this->plugin_settings = $instance->plugin_settings;
+
+		if ( ! isset( $request['{{SETTINGS_KEY}}'] ) ) {
+			return;
+		}
+
+		$settings = $request['{{SETTINGS_KEY}}'] ?? array();
+
+		if ( isset( $settings['gateway_label'] ) ) {
+			$this->plugin_settings->set( '{{SETTINGS_KEY}}.gateway_label', $settings['gateway_label'] );
+		}
+
+		if ( isset( $settings['public_key'] ) ) {
+			$this->plugin_settings->set( '{{SETTINGS_KEY}}.public_key', $settings['public_key'] );
+		}
+
+		if ( isset( $settings['secret_key'] ) ) {
+			$this->plugin_settings->set( '{{SETTINGS_KEY}}.secret_key', $settings['secret_key'] );
+		}
+
+		$this->plugin_settings->save();
+	}
+}

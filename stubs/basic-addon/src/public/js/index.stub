@@ -1,0 +1,8 @@
+/**
+ * Public JavaScript for {{ADDON_NAME}}
+ *
+ * @package {{NAMESPACE}}
+ */
+
+// Add your public JavaScript code here
+console.log('{{ADDON_NAME}} public script loaded');

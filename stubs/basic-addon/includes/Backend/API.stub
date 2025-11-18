@@ -1,0 +1,30 @@
+<?php
+/**
+ * Handles the API functionality for the {{ADDON_NAME}} plugin.
+ *
+ * This class manages the API endpoints for the {{ADDON_NAME}} plugin,
+ * including registration of routes, permission checks, and data retrieval.
+ *
+ * @package {{NAMESPACE}}\Backend
+ * @since 1.0.0
+ */
+namespace {{NAMESPACE}}\Backend;
+
+use WP_REST_Request;{{GLOBAL_IMPORTS}}{{TRIP_IMPORTS}}
+/**
+ * API class.
+ *
+ * @since 1.0.0
+ */
+class API {
+
+	/**
+	 * Register hooks.
+	 *
+	 * @return void
+	 */
+	public static function register_hooks(): void {
+		$instance = new self();{{TRIP_HOOKS}}{{GLOBAL_HOOKS}}
+	}
+{{GLOBAL_METHODS}}{{TRIP_METHODS}}
+}

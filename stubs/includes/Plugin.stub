@@ -1,0 +1,177 @@
+<?php
+/**
+ * Main class for the {{NAMESPACE}} plugin.
+ *
+ * @package {{ADDON_NAME}}
+ * @since 1.0.0
+ */
+
+namespace {{NAMESPACE}};
+
+use {{NAMESPACE}}\Backend\API;
+
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * Plugin class.
+ */
+final class Plugin {
+
+	/**
+	 * Plugin version.
+	 *
+	 * @var string
+	 */
+	public static string $version = '1.0.0';
+
+	/**
+	 * Plugin instance.
+	 *
+	 * @var ?Plugin
+	 */
+	private static ?Plugin $instance = null;
+
+	/**
+	 * Get plugin instance.
+	 *
+	 * @return Plugin
+	 */
+	public static function execute(): Plugin {
+		if ( is_null( self::$instance ) || ! ( self::$instance instanceof self ) ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
+
+	/**
+	 * Constructor.
+	 */
+	private function __construct() {
+		if ( ! $this->meets_requirements() ) {
+			add_action( 'admin_notices', [ $this, 'admin_notice' ] );
+			return;
+		}
+
+		$this->load_textdomain();
+		$this->register_hooks();
+	}
+
+	/**
+	 * Verify plugin requirements.
+	 *
+	 * @return bool
+	 */
+	private function meets_requirements(): bool {
+		return defined( 'WP_TRAVEL_ENGINE_VERSION' );
+	}
+
+	/**
+	 * Show admin notice if requirements not met.
+	 */
+	public function admin_notice(): void {
+		echo '<div class="notice notice-error"><p>' .
+			esc_html__( '{{ADDON_NAME}} requires WP Travel Engine plugin to be installed and activated.', '{{SLUG}}' ) .
+			'</p></div>';
+	}
+
+	/**
+	 * Register plugin hooks.
+	 */
+	private function register_hooks(): void {
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_assets' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_public_assets' ] );
+
+		// Only add these if user selected global/trip-edit options.
+		add_filter( 'wptravelengine_settings:tabs:extensions', [ $this, 'add_tab_settings' ] );
+		add_filter( 'wp_travel_engine_admin_trip_meta_tabs', [ $this, 'add_trip_meta_tabs' ] );
+
+		API::register_hooks();
+	}
+
+	/**
+	 * Enqueue admin scripts.
+	 */
+	public function enqueue_admin_assets(): void {
+		$asset_file = {{CONSTANT}}_DIR_PATH . 'dist/admin.asset.php';
+
+		if ( file_exists( $asset_file ) ) {
+			$asset = include $asset_file;
+		} else {
+			$asset = [
+				'dependencies' => [ 'wp-hooks', 'wptravelengine-exports' ],
+				'version'      => self::$version,
+			];
+		}
+
+		wp_enqueue_script(
+			'{{SLUG}}-admin',
+			{{CONSTANT}}_DIR_URL . 'dist/admin.js',
+			$asset['dependencies'],
+			$asset['version'],
+			true
+		);
+	}
+
+	/**
+	 * Enqueue public scripts.
+	 */
+	public function enqueue_admin_assets(): void {
+		$asset_file = {{CONSTANT}}_DIR_PATH . 'dist/public.asset.php';
+
+		if ( file_exists( $asset_file ) ) {
+			$asset = include $asset_file;
+		} else {
+			$asset = [
+				'dependencies' => [ 'wp-hooks', 'wptravelengine-exports' ],
+				'version'      => self::$version,
+			];
+		}
+
+		wp_enqueue_script(
+			'{{SLUG}}-public',
+			{{CONSTANT}}_DIR_URL . 'dist/public.js',
+			$asset['dependencies'],
+			$asset['version'],
+			true
+		);
+	}
+
+	/**
+	 * Load plugin textdomain.
+	 */
+	private function load_textdomain(): void {
+		unload_textdomain( '{{SLUG}}' );
+		load_plugin_textdomain( '{{SLUG}}', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+	}
+
+	/**
+	 * Add global settings tab.
+	 *
+	 * @param array $tab_settings Tab settings.
+	 * @return array
+	 */
+	public function add_tab_settings( array $tab_settings ): array {
+		$builder = {{CONSTANT}}_DIR_PATH . 'includes/Builders/global-settings.php';
+		if ( file_exists( $builder ) ) {
+			$tab_settings['sub_tabs'][] = require $builder;
+		}
+
+		return $tab_settings;
+	}
+
+	/**
+	 * Add trip meta tab.
+	 *
+	 * @param array $tabs Trip meta tabs.
+	 * @return array
+	 */
+	public function add_trip_meta_tabs( array $tabs ): array {
+		$file = {{CONSTANT}}_DIR_PATH . 'includes/Builders/trip-meta.php';
+		if ( file_exists( $file ) ) {
+			$tabs['{{SLUG}}'] = require $file;
+		}
+
+		return $tabs;
+	}
+}

@@ -1,0 +1,41 @@
+<?php
+/**
+ * WP Travel Engine - {{ADDON_NAME}} Settings.
+ *
+ * @since 1.0.0
+ */
+$webhook_url  = get_site_url() . '/?{{SLUG}}=wptravelengine-webhook';
+
+return array(
+	'title'  => __( '{{TITLE}}', '{{FULL_SLUG}}' ),
+	'order'  => 10,
+	'id'     => 'payment-{{SLUG}}',
+	'fields' => array(
+		array(
+			'field_type' => 'DEBUG_MODE',
+			'name'       => 'debug_mode',
+		),
+		array(
+			'label'      => __( 'Gateway Label', '{{FULL_SLUG}}' ),
+			'help'       => __( 'Enter the payment gateway label to display in checkout page.', '{{FULL_SLUG}}' ),
+			'field_type' => 'TEXT',
+			'name'       => '{{SETTINGS_KEY}}.gateway_label',
+			'default'    => __( '{{TITLE}}', '{{FULL_SLUG}}' ),
+			'divider'    => true,
+		),
+		array(
+			'label'      => __( 'Public Key', '{{FULL_SLUG}}' ),
+			'help'       => __( 'Enter your public key from your payment gateway dashboard.', '{{FULL_SLUG}}' ),
+			'field_type' => 'TEXT',
+			'name'       => '{{SETTINGS_KEY}}.public_key',
+			'divider'    => true,
+		),
+		array(
+			'label'      => __( 'Secret Key', '{{FULL_SLUG}}' ),
+			'help'       => __( 'Enter your secret key from your payment gateway dashboard.', '{{FULL_SLUG}}' ),
+			'field_type' => 'TEXT',
+			'name'       => '{{SETTINGS_KEY}}.secret_key',
+			'divider'    => true,
+		),
+	),
+);

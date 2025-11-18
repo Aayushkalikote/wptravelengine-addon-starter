@@ -1,0 +1,30 @@
+<?php
+
+use NAMESPACE\Settings\Globals;
+
+/**
+ * Difficulty level trip meta tab.
+ *
+ * @package {{NAMESPACE}}\Builders
+ * @return array
+ * @since 1.0.0
+ */
+
+return array(
+	'tab_label'         => __( {{ADDON_NAME}} Settings', '{{SLUG}}' ),
+	'tab_heading'       => __( '{{ADDON_NAME}}', '{{SLUG}}' ),
+	'callback_function' => 'wptravelengine_trip_edit_tab_difficulty_level',
+	'content_key'       => '{{SLUG}}',
+	'current'           => false,
+	'content_loaded'    => false,
+	'priority'          => 125,
+	'icon'              => 'info',
+	'fields'            => array(
+		array(
+			'field' => array(
+				'type'    => 'ALERT',
+				'content' => __( '{{ADDON_NAME}} Trip Edit Settings', '{{SLUG}}' ),
+			),
+		),
+	),
+);

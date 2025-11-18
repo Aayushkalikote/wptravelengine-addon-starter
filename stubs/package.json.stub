@@ -1,0 +1,43 @@
+{
+  "name": "{{SLUG}}",
+  "version": "1.0.0",
+  "description": "{{DESCRIPTION}}",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "echo \"No build process required\" && exit 0"
+  },
+  "keywords": [
+    "wordpress",
+    "wp-travel-engine",
+    "payment",
+    "gateway"
+  ],
+  "author": "WP Travel Engine",
+  "license": "GPL-3.0-or-later",
+  "devDependencies": {
+    "@wordpress/scripts": "^30.0.0",
+    "grunt": "^1.6.1",
+    "grunt-babel": "^8.0.0",
+    "grunt-checktextdomain": "^1.0.1",
+    "grunt-contrib-clean": "^2.0.1",
+    "grunt-contrib-compress": "^2.0.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-cssmin": "^1.0.2",
+    "grunt-contrib-jshint": "^1.1.0",
+    "grunt-contrib-sass": "^1.0.0",
+    "grunt-contrib-uglify": "^5.2.2",
+    "grunt-contrib-watch": "^1.1.0",
+    "grunt-file-creator": "^0.1.3",
+    "grunt-push-svn": "^0.2.2",
+    "grunt-run": "^0.8.1",
+    "grunt-svn-export": "^0.1.7",
+    "grunt-wp-i18n": "^1.0.3"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "react-hook-form": "~7.54.2",
+    "styled-components": "^6.1.15"
+  }
+}

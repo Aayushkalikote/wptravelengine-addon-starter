@@ -1,0 +1,18 @@
+
+# Test files
+tests/
+test-local.sh
+quick-test.sh
+
+# Build scripts
+install-local.sh
+setup-local-wp.sh
+
+# IDE files
+.vscode/
+.idea/
+
+# Composer dev files
+composer.lock
+phpcs.xml
+vendor/

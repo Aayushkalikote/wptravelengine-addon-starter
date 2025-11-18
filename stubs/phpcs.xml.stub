@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ruleset name="WordPress Plugin Coding Standards">
+
+    <description>A custom set of code standard rules for {{ADDON_NAME}} plugin.</description>
+
+    <!-- What to scan -->
+    <file>.</file>
+    <exclude-pattern>/vendor/</exclude-pattern>
+    <exclude-pattern>/node_modules/</exclude-pattern>
+
+    <!-- How to scan -->
+    <arg value="sp"/>
+    <arg name="basepath" value="./"/>
+    <arg name="colors"/>
+    <arg name="extensions" value="php"/>
+    <arg name="parallel" value="8"/>
+
+    <!-- Rules: WordPress Coding Standards -->
+    <config name="minimum_supported_wp_version" value="5.0"/>
+    <config name="text-domain" value="{{SLUG}}"/>
+
+    <rule ref="WordPress"/>
+</ruleset>

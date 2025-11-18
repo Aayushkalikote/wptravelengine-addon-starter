@@ -1,0 +1,26 @@
+const path = require('path');
+const config = require('@wordpress/scripts/config/webpack.config');
+
+module.exports = (env, argv) => {
+    return {
+        ...config,
+        mode: argv.mode,
+        entry: {
+            admin: './src/admin/js/index.js',
+            public: [
+                './src/public/js/index.js',
+                './src/public/scss/index.scss'
+            ],
+        },
+        output: {
+            path: path.resolve(__dirname, 'dist'),
+            filename: '[name].js',
+        },
+        externals: {
+            '@wptravelengine/admin/components': 'window.wptravelengine.adminComponents',
+            '@wptravelengine/admin/wrappers': 'window.wptravelengine.adminWrappers',
+            '@wptravelengine/admin/reactHookForm': 'window.wptravelengine.reactHookForm',
+            '@wptravelengine/public/fragments': 'window.wptravelengine.publicFragments',
+        },
+    }
+}

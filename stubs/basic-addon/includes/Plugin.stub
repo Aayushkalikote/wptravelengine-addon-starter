@@ -1,0 +1,91 @@
+<?php
+/**
+ * Main class for the {{ADDON_NAME}} plugin.
+ *
+ * @package {{NAMESPACE}}
+ * @since 1.0.0
+ */
+namespace {{NAMESPACE}};
+
+{{BACKEND_API_IMPORT}}
+/**
+ * Plugin class.
+ */
+final class Plugin {
+
+	/**
+	 * Version of the plugin
+	 *
+	 * @var string
+	 */
+	public static string $version = '1.0.0';
+
+	/**
+	 * Instance of the plugin.
+	 *
+	 * @var ?Plugin
+	 */
+	private static $instance = null;
+
+	/**
+	 * Returns the instance of the plugin.
+	 *
+	 * @return Plugin
+	 */
+	public static function execute() {
+		if ( is_null( self::$instance ) || ! ( self::$instance instanceof self ) ) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
+
+	/**
+	 * Constructor.
+	 *
+	 * @return void
+	 */
+	public function __construct() {
+		if ( ! $this->meets_requirements() ) {
+			add_action( 'admin_notices', array( $this, 'admin_notice' ) );
+			return;
+		}
+		$this->load_textdomain();
+		$this->register_hooks();
+	}
+
+	/**
+	 * Check if the plugin meets the requirements.
+	 *
+	 * @return bool
+	 */
+	public static function meets_requirements(): bool {
+		return defined( 'WP_TRAVEL_ENGINE_VERSION' );
+	}
+
+	/**
+	 * Admin notice.
+	 *
+	 * @return void
+	 */
+	public function admin_notice() {
+		echo '<div class="notice notice-error"><p>' . __( 'WP Travel Engine - {{ADDON_NAME}} requires WP Travel Engine Plugin to be installed and activated.', '{{FULL_SLUG}}' ) . '</p></div>';
+	}
+
+	/**
+	 * Register hooks.
+	 *
+	 * @return void
+	 */
+	private function register_hooks() {{{ADMIN_ENQUEUE_HOOK}}{{GLOBAL_SETTINGS_HOOK}}{{TRIP_SETTINGS_HOOK}}{{API_REGISTER_CALL}}
+	}
+{{ENQUEUE_ADMIN_ASSETS_METHOD}}
+	/**
+	 * Load plugin textdomain.
+	 *
+	 * @return void
+	 */
+	private function load_textdomain() {
+		load_plugin_textdomain( '{{FULL_SLUG}}', false, WPTRAVELENGINE_{{CONSTANT}}_DIR_PATH . '/languages/' );
+	}
+{{ADD_GLOBAL_SETTINGS_METHOD}}{{ADD_TRIP_META_METHOD}}
+}

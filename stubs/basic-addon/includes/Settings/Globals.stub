@@ -1,0 +1,60 @@
+<?php
+/**
+ * Handles global settings for the {{ADDON_NAME}} plugin.
+ *
+ * This class provides methods to retrieve and update global settings for the
+ * {{ADDON_NAME}} plugin.
+ *
+ * @package {{NAMESPACE}}\Settings
+ * @since 1.0.0
+ */
+namespace {{NAMESPACE}}\Settings;
+
+use WPTravelEngine\Core\Controllers\RestAPI\V2\Settings;
+use WPTravelEngine\Core\Models\Settings\Options;
+
+/**
+ * Global Settings.
+ */
+final class Globals {
+
+	/**
+	 * Get {{SLUG}} settings.
+	 *
+	 * @return array {{ADDON_NAME}} settings.
+	 */
+	public static function wptravelengine_{{FUNCTION_SLUG}}_settings() {
+		return Options::get( __FUNCTION__, array() );
+	}
+
+	/**
+	 * Prepare API datas.
+	 *
+	 * @return array
+	 */
+	public static function prepare_api_datas(): array {
+		// @TODO: Add prepare logic here.
+		return array();
+	}
+
+	/**
+	 * Update global settings from API request.
+	 *
+	 * @param array    $settings Settings data.
+	 * @param Settings $controller Settings controller.
+	 * @return void
+	 */
+	public static function update_api_datas( array $settings, Settings $controller ): void {
+		// @TODO: Add update logic here.
+	}
+
+	/**
+	 * Get global settings schema.
+	 *
+	 * @return array
+	 */
+	public static function get_api_schema(): array {
+		// @TODO: Add get schema logic here.
+		return array();
+	}
+}

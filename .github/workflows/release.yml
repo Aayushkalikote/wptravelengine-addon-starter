@@ -1,0 +1,49 @@
+name: Create Release Zip
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Create Release Zip
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: composer
+          coverage: none
+
+      - name: Get tag version
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Install dependencies
+        run: composer install --no-dev --optimize-autoloader --no-interaction
+
+      - name: Create build directory
+        run: |
+          mkdir -p build
+          rsync -av --exclude-from='.distignore' . build/wptravelengine-addon-starter/
+
+      - name: Create zip
+        working-directory: build
+        run: zip -r wptravelengine-addon-starter-${{ steps.get_version.outputs.VERSION }}.zip wptravelengine-addon-starter/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: build/wptravelengine-addon-starter-${{ steps.get_version.outputs.VERSION }}.zip
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

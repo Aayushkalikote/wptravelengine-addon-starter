@@ -1,0 +1,80 @@
+<?php
+/**
+ * {{ADDON_NAME}} Payment Gateway
+ *
+ * @package {{NAMESPACE}}
+ */
+
+namespace {{NAMESPACE}};
+
+use WPTravelEngine\Core\Booking\BookingProcess;
+use WPTravelEngine\Core\Models\Post\Booking;
+use WPTravelEngine\Core\Models\Post\Payment as PaymentModel;
+use WPTravelEngine\PaymentGateways\BaseGateway;
+
+/**
+ * {{ADDON_NAME}} Gateway Class
+ */
+class Payment extends BaseGateway {
+
+	/**
+	 * @inheritDoc
+	 */
+	public static string $cart_version = '4.0';
+
+	/**
+	 * Gateway ID
+	 *
+	 * @var string
+	 */
+	protected $gateway_id = '{{GATEWAY_ID}}';
+
+	/**
+	 * Settings
+	 *
+	 * @var string
+	 */
+	private $settings;
+
+	/**
+	 * Constructor
+	 */
+	public function __construct() {
+		$this->settings = wptravelengine_settings()->get();
+		$test_mode      = $this->enabled_payment_debug();
+	}
+
+	/**
+	 * Get gateway ID
+	 */
+	public function get_gateway_id(): string {
+		return $this->gateway_id;
+	}
+
+	/**
+	 * Get gateway label (admin)
+	 */
+	public function get_label(): string {
+		return $this->settings['{{SETTINGS_KEY}}']['gateway_label'] ?? __( '{{ADDON_NAME}}', '{{FULL_SLUG}}' );
+	}
+
+	/**
+	 * Get gateway public label
+	 */
+	public function get_public_label(): string {
+		return $this->settings['{{SETTINGS_KEY}}']['gateway_label'] ?? __( '{{ADDON_NAME}}', '{{FULL_SLUG}}' );
+	}
+
+	/**
+	 * Process payment
+	 *
+	 * @param Booking        $booking Booking object.
+	 * @param PaymentModel   $payment Payment object.
+	 * @param BookingProcess $instance Booking process instance.
+	 */
+	public function process_payment_v2( Booking $booking, PaymentModel $payment, BookingProcess $instance ): void {
+		global $wte_cart;
+		$amount = $wte_cart->get_total_payable_amount();
+		// @TODO: ADD Required process for payment.
+	}
+}
