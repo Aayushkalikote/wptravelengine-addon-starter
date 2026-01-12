@@ -30,6 +30,12 @@ Install as a WP-CLI package to create addons directly in your WordPress plugins 
 wp package install wptravelengine/addonstarter
 ```
 
+**If the normal install doesn't work, install from the GitHub repository:**
+
+```bash
+wp package install https://github.com/Aayushkalikote/wptravelengine-addon-starter.git
+```
+
 ### Method 2: Global Composer Command (Recommended for Package Developers)
 
 Install globally to use anywhere:
