@@ -334,6 +334,22 @@ chmod +x ~/.config/composer/vendor/bin/wptravelengine-addon-starter
 - [Workflow Guide](WORKFLOW.md) - Distribution workflow
 - [Testing Guide](TESTING-LOCAL.md) - Local testing instructions
 
+## Changelog
+
+### 0.0.2 – 28th May 2026
+
+- New Feature: Added GitHub release workflow stub generated per addon, with optional Composer authentication step for Pro-compatible addons.
+- New Feature: Generated addons now ship with a `languages/` directory and `wp_set_script_translations()` wired into admin script enqueue for JavaScript translations.
+- Improved: i18n script in `package.json` no longer excludes the `dist/` directory, so built JavaScript strings are picked up when generating the POT file.
+- Improved: `wp i18n make-json` now runs with `--no-purge` to preserve the source `.po` file across regenerations.
+- Fixed: Payment gateway global settings now include an `ABSPATH` guard and `@package` docblock by default, ensuring every gateway starts with DEBUG mode and Gateway Label fields.
+- Fixed: Removed stray `$webhook_url` variable that appeared above the `return` statement in the payment gateway settings stub.
+- Fixed: Resolved PHP warnings about too many arguments passed to `Filesystem::mkdir()` in the webpack source directory setup.
+
+### 0.0.1 – Initial Release
+
+- New Feature: Initial release of the WP Travel Engine Addon Starter scaffolding tool.
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.

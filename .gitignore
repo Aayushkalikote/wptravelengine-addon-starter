@@ -11,6 +11,7 @@ setup-local-wp.sh
 # IDE files
 .vscode/
 .idea/
+.DS_Store
 
 # Composer dev files
 composer.lock

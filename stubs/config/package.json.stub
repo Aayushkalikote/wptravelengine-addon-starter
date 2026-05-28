@@ -7,7 +7,7 @@
     "author": "wptravelengine",
     "license": "GPL-3.0-or-later",
     "scripts": {{{WEBPACK_SCRIPTS}}
-        "i18n": "npx grunt addtextdomain && wp i18n make-pot . ./languages/{{FULL_SLUG}}.pot --exclude=vendor,node_modules,assets,src,languages,dist/bundle,dist/admin --allow-root && cp ./languages/{{FULL_SLUG}}.pot ./languages/{{FULL_SLUG}}.po && wp i18n make-json ./languages --allow-root",
+        "i18n": "npx grunt addtextdomain && wp i18n make-pot . ./languages/{{FULL_SLUG}}.pot --exclude=vendor,node_modules,assets,src,languages --allow-root && cp ./languages/{{FULL_SLUG}}.pot ./languages/{{FULL_SLUG}}.po && wp i18n make-json ./languages --no-purge --allow-root",
         "bundle": "composer install --no-dev --optimize-autoloader{{WEBPACK_BUILD}} && npx grunt bundle"
     },
     "devDependencies": {{{WEBPACK_DEV_DEPENDENCIES}}

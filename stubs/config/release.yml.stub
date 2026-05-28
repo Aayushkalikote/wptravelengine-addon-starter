@@ -1,0 +1,101 @@
+name: Create Release
+on:
+  push:
+    tags:
+      - "v*.*.*"
+jobs:
+  tag:
+    name: New tag
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Checkout shared actions
+        uses: actions/checkout@v4
+        with:
+          repository: Codewing-Solutions/wptravelengine
+          ref: next
+          token: ${{ secrets.ACCESS_TOKEN }}
+          path: _wte_actions
+          sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
+
+      - name: Copy shared actions to workspace
+        run: cp -r _wte_actions/.github/actions/. .github/actions/
+
+      # Step to set up PHP (if using Composer)
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4' # Choose your PHP version
+          extensions: mbstring, dom
+          tools: composer
+{{COMPOSER_AUTH}}
+      # Step to install wp-cli
+      - name: Install wp-cli
+        run: |
+          curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+          chmod +x wp-cli.phar
+          sudo mv wp-cli.phar /usr/local/bin/wp
+
+      # Step to set up Node.js (if using NPM for assets)
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'  # Specify your Node.js version
+
+      - name: Stamp @since/@deprecated next
+        uses: ./.github/actions/stamp-version
+        with:
+          commit-changes: ${{ contains(github.ref, '-rc') }}
+
+      - name: Fix PHP formatting
+        if: github.event.base_ref == 'refs/heads/next'
+        uses: ./.github/actions/fix-php
+
+      # Optional: If your plugin is using composer dependencies, we want to include them
+      # WITHOUT the dev dependencies.
+      - name: Build
+        run: |
+          yarn install
+          yarn build
+          yarn bundle
+
+      - name: Read package.json
+        id: package_json  # Set an ID so we can reference the outputs later
+        run: |
+          name=$(jq -r .name < package.json)
+          version=$(jq -r .version < package.json)
+          echo "PACKAGE_NAME=$name" >> $GITHUB_ENV
+          echo "PACKAGE_VERSION=$version" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Create zip # artifacts to upload to release.
+        id: create_zip
+        run: |
+          cd bundle
+          zip -r ${{ env.PACKAGE_NAME }}-${{ env.PACKAGE_VERSION }}.zip ${{ env.PACKAGE_NAME }}
+          echo "ZIP_PATH=bundle/${{ env.PACKAGE_NAME }}-${{ env.PACKAGE_VERSION }}.zip" >> $GITHUB_ENV
+
+      - name: Determine if pre-release
+        id: pre_release_check
+        run: |
+          if [[ "${GITHUB_REF##*/}" == *"-alpha"* || "${GITHUB_REF##*/}" == *"-beta"* || "${GITHUB_REF##*/}" == *"-rc"* ]]; then
+            echo "is_prerelease=true" >> $GITHUB_ENV
+          else
+            echo "is_prerelease=false" >> $GITHUB_ENV
+          fi
+
+      - name: Create GitHub release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: ${{ env.ZIP_PATH }}
+          body: |
+            Release ${{ env.PACKAGE_VERSION }}
+          prerelease: ${{ env.is_prerelease == 'true' }}

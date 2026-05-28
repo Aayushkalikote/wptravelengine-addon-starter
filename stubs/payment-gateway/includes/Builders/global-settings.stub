@@ -2,13 +2,15 @@
 /**
  * WP Travel Engine - {{ADDON_NAME}} Settings.
  *
+ * @package {{NAMESPACE}}
  * @since 1.0.0
  */
-$webhook_url  = get_site_url() . '/?{{SLUG}}=wptravelengine-webhook';
+
+defined( 'ABSPATH' ) || exit;
 
 return array(
 	'title'  => __( '{{TITLE}}', '{{FULL_SLUG}}' ),
-	'order'  => 10,
+	'order'  => 70,
 	'id'     => 'payment-{{SLUG}}',
 	'fields' => array(
 		array(
@@ -17,7 +19,7 @@ return array(
 		),
 		array(
 			'label'      => __( 'Gateway Label', '{{FULL_SLUG}}' ),
-			'help'       => __( 'Enter the payment gateway label to display in checkout page.', '{{FULL_SLUG}}' ),
+			'help'       => __( 'Label shown to customers on the checkout page.', '{{FULL_SLUG}}' ),
 			'field_type' => 'TEXT',
 			'name'       => '{{SETTINGS_KEY}}.gateway_label',
 			'default'    => __( '{{TITLE}}', '{{FULL_SLUG}}' ),

@@ -39,5 +39,10 @@
         "scaffolder",
         "generator",
         "payment-gateway"
-    ]
+    ],
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
 }

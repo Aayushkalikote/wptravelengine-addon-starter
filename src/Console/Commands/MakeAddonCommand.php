@@ -23,7 +23,7 @@ class MakeAddonCommand extends Command
         $helper = $this->getHelper('question');
 
         // 1. Addon name
-        $addonNameQuestion = new Question('Addon Name (e.g., "PayStack Payment Gateway" or "Trip Difficulty Level"): ');
+        $addonNameQuestion = new Question('Addon Name (e.g., "Stripe Payment Gateway" or "Trip Difficulty Level"): ');
         $addonName = trim($helper->ask($input, $output, $addonNameQuestion));
 
         // 2. Description
@@ -181,6 +181,8 @@ class MakeAddonCommand extends Command
         // Create base directories
         $filesystem->mkdir($addonDir);
         $filesystem->mkdir("$addonDir/includes");
+        $filesystem->mkdir("$addonDir/languages");
+        file_put_contents("$addonDir/languages/.gitkeep", '');
 
         // Generate main plugin file
         $this->generateMainPluginFile($addonDir, $stubsPath, $stubType, $data);
@@ -296,7 +298,7 @@ class MakeAddonCommand extends Command
         // Enqueue admin assets method
         if ($useWebpack) {
             $enqueueMethod = "\n\t/**\n\t * Enqueue admin script.\n\t *\n\t * @return void\n\t */\n\tpublic function enqueue_admin_assets() {\n\t\t\$admin_script_path = WPTRAVELENGINE_{$data['names']['constant']}_DIR_PATH . 'dist/admin.asset.php';\n\t\t\$screen            = get_current_screen();\n\t\tif ( file_exists( \$admin_script_path ) && ( \$screen->post_type === 'trip' || \$screen->id === 'booking_page_class-wp-travel-engine-admin' ) ) {
-\t\t\t\$asset = require \$admin_script_path;\n\t\t\twp_enqueue_script(\n\t\t\t\t'{$data['names']['full_slug']}-admin',\n\t\t\t\tWPTRAVELENGINE_{$data['names']['constant']}_DIR_URL . 'dist/admin.js',\n\t\t\t\tarray_merge( \$asset['dependencies'], array( 'wp-hooks', 'wptravelengine-exports' ) ),\n\t\t\t\t\$asset['version'],\n\t\t\t\ttrue\n\t\t\t);\n\t\t}\n\t}\n";
+\t\t\t\$asset = require \$admin_script_path;\n\t\t\twp_enqueue_script(\n\t\t\t\t'{$data['names']['full_slug']}-admin',\n\t\t\t\tWPTRAVELENGINE_{$data['names']['constant']}_DIR_URL . 'dist/admin.js',\n\t\t\t\tarray_merge( \$asset['dependencies'], array( 'wp-hooks', 'wptravelengine-exports' ) ),\n\t\t\t\t\$asset['version'],\n\t\t\t\ttrue\n\t\t\t);\n\t\t\twp_set_script_translations(\n\t\t\t\t'{$data['names']['full_slug']}-admin',\n\t\t\t\t'{$data['names']['full_slug']}',\n\t\t\t\tWPTRAVELENGINE_{$data['names']['constant']}_DIR_PATH . 'languages'\n\t\t\t);\n\t\t}\n\t}\n";
             $stub = str_replace('{{ENQUEUE_ADMIN_ASSETS_METHOD}}', $enqueueMethod, $stub);
         } else {
             $stub = str_replace('{{ENQUEUE_ADMIN_ASSETS_METHOD}}', '', $stub);
@@ -508,6 +510,35 @@ class MakeAddonCommand extends Command
         // .gitignore
         $gitignoreStub = file_get_contents("$stubsPath/config/.gitignore.stub");
         file_put_contents("$addonDir/.gitignore", $gitignoreStub);
+
+        // .github/workflows/release.yml
+        $this->generateReleaseWorkflow($addonDir, $stubsPath, $data);
+    }
+
+    /**
+     * Generate GitHub release workflow.
+     *
+     * Pro-compatible addons include Composer Authentication step (private repo access
+     * for codewing-solutions/wptravelengine-pro-config). Non-pro skip it.
+     */
+    private function generateReleaseWorkflow(string $addonDir, string $stubsPath, array $data)
+    {
+        $filesystem = new Filesystem();
+        $filesystem->mkdir("$addonDir/.github/workflows");
+
+        $releaseStub = file_get_contents("$stubsPath/config/release.yml.stub");
+
+        if ($data['requires_pro']) {
+            $composerAuth = "      # Step to set up GitHub token for Composer\n"
+                . "      - name: Configure Composer Authentication\n"
+                . "        run: |\n"
+                . "          echo '{\"github-oauth\": {\"github.com\": \"\${{ secrets.ACCESS_TOKEN }}\"}}' > ~/.composer/auth.json\n";
+        } else {
+            $composerAuth = '';
+        }
+
+        $releaseContent = str_replace('{{COMPOSER_AUTH}}', $composerAuth, $releaseStub);
+        file_put_contents("$addonDir/.github/workflows/release.yml", $releaseContent);
     }
 
     /**
@@ -517,9 +548,9 @@ class MakeAddonCommand extends Command
     {
         $filesystem = new Filesystem();
 
-        // Create src directories
-        $filesystem->mkdir("$addonDir/src/admin/js", 0755, true);
-        $filesystem->mkdir("$addonDir/src/public/js", 0755, true);
+        // Create src directories (Symfony Filesystem::mkdir is recursive by default)
+        $filesystem->mkdir("$addonDir/src/admin/js");
+        $filesystem->mkdir("$addonDir/src/public/js");
         $filesystem->mkdir("$addonDir/src/public/scss");
 
         // Copy webpack config
