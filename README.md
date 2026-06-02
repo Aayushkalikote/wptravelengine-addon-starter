@@ -38,13 +38,76 @@ wp package install https://github.com/Aayushkalikote/wptravelengine-addon-starte
 
 ### Method 2: Global Composer Command (Recommended for Package Developers)
 
-Install globally to use anywhere:
+This package is **not published on Packagist**. Install it globally from the private GitHub repository as a VCS source.
+
+**Step 1 — Register the VCS repository in your global Composer config:**
 
 ```bash
-composer global require wptravelengine/addonstarter
+composer global config repositories.wptravelengine-addonstarter vcs https://github.com/Aayushkalikote/wptravelengine-addon-starter.git
+```
 
-# Add Composer's global bin to your PATH
+**Step 2 — Require the package globally:**
+
+```bash
+composer global require wptravelengine/addonstarter:dev-main
+```
+
+> Use `dev-main` to track the `main` branch, or pin to a tag like `^0.0.2` once tags are published.
+
+**Step 3 — Add Composer's global bin to your PATH:**
+
+```bash
 export PATH="$HOME/.config/composer/vendor/bin:$PATH"
+```
+
+#### Private repository authentication
+
+If the GitHub repository is private, Composer needs a token to clone it:
+
+```bash
+# Create a GitHub Personal Access Token with `repo` scope at:
+# https://github.com/settings/tokens
+
+composer global config --global --auth github-oauth.github.com YOUR_GITHUB_TOKEN
+```
+
+Alternatively, use SSH by registering the repo with its SSH URL:
+
+```bash
+composer global config repositories.wptravelengine-addonstarter vcs git@github.com:Aayushkalikote/wptravelengine-addon-starter.git
+```
+
+Then ensure your SSH key has access to the repository.
+
+## Updating
+
+**WP-CLI package:**
+
+```bash
+wp package update
+```
+
+**Global Composer package (VCS install):**
+
+```bash
+composer global update wptravelengine/addonstarter
+```
+
+**Force a specific branch or tag:**
+
+```bash
+# Latest main branch
+composer global require wptravelengine/addonstarter:dev-main
+
+# Specific tag
+composer global require wptravelengine/addonstarter:^0.0.2
+```
+
+**If you get a stale version, clear the cache:**
+
+```bash
+composer clearcache
+composer global update wptravelengine/addonstarter
 ```
 
 ## Usage
@@ -61,6 +124,7 @@ wp wptravelengine-addon-starter scaffold
 The addon will be created in `wp-content/plugins/` directory.
 
 **With flags (non-interactive):**
+
 ```bash
 wp wptravelengine-addon-starter scaffold \
   --name="Stripe Payment Gateway" \
@@ -93,6 +157,7 @@ Pro Compatible? no
 ```
 
 **Generated structure:**
+
 ```
 wptravelengine-paystack-payment/
 ├── wptravelengine-paystack-payment.php  # Main plugin file
@@ -122,6 +187,7 @@ Webpack? yes
 ```
 
 **Generated structure:**
+
 ```
 wptravelengine-trip-difficulty-level/
 ├── wptravelengine-trip-difficulty-level.php
@@ -148,11 +214,13 @@ wptravelengine-trip-difficulty-level/
 
 The scaffolder automatically handles naming:
 
-| Input | Type | Output Directory |
-|-------|------|------------------|
+
+| Input              | Type    | Output Directory                   |
+| ------------------ | ------- | ---------------------------------- |
 | "PayStack Gateway" | Payment | `wptravelengine-paystack-payment/` |
-| "Stripe Payment" | Payment | `wptravelengine-stripe-payment/` |
-| "Trip Notes" | Basic | `wptravelengine-trip-notes/` |
+| "Stripe Payment"   | Payment | `wptravelengine-stripe-payment/`   |
+| "Trip Notes"       | Basic   | `wptravelengine-trip-notes/`       |
+
 
 ## After Scaffolding
 
@@ -189,6 +257,7 @@ wp package uninstall wptravelengine/addonstarter
 ```
 
 **Verify removal:**
+
 ```bash
 wp package list
 ```
@@ -201,7 +270,14 @@ If installed globally via Composer, remove it using:
 composer global remove wptravelengine/addonstarter
 ```
 
+**Optional — also remove the VCS repository entry from your global Composer config:**
+
+```bash
+composer global config --unset repositories.wptravelengine-addonstarter
+```
+
 **Verify removal:**
+
 ```bash
 composer global show | grep wptravelengine
 ```
@@ -211,6 +287,7 @@ composer global show | grep wptravelengine
 To remove a generated addon from your WordPress site:
 
 **Using WP-CLI:**
+
 ```bash
 # Deactivate first
 wp plugin deactivate wptravelengine-your-addon
@@ -220,6 +297,7 @@ wp plugin delete wptravelengine-your-addon
 ```
 
 **Manually:**
+
 ```bash
 # Navigate to plugins directory
 cd /path/to/wordpress/wp-content/plugins
@@ -229,6 +307,7 @@ rm -rf wptravelengine-your-addon
 ```
 
 **Via WordPress Admin:**
+
 1. Go to **Plugins → Installed Plugins**
 2. Deactivate the addon
 3. Click **Delete** once it's deactivated
@@ -237,18 +316,21 @@ rm -rf wptravelengine-your-addon
 
 ### Available Flags (Non-Interactive Mode)
 
-| Flag | Description | Values |
-|------|-------------|--------|
-| `--name` | Addon name | Any string |
-| `--description` | Addon description | Any string |
-| `--type` | Addon type | `payment-gateway`, `basic` |
-| `--pro` | Requires WP Travel Engine Pro | Flag (no value) |
-| `--settings` | Settings type (basic addons only) | `none`, `global`, `trip-edit`, `both` |
-| `--webpack` | Include webpack setup | Flag (no value) |
+
+| Flag            | Description                       | Values                                |
+| --------------- | --------------------------------- | ------------------------------------- |
+| `--name`        | Addon name                        | Any string                            |
+| `--description` | Addon description                 | Any string                            |
+| `--type`        | Addon type                        | `payment-gateway`, `basic`            |
+| `--pro`         | Requires WP Travel Engine Pro     | Flag (no value)                       |
+| `--settings`    | Settings type (basic addons only) | `none`, `global`, `trip-edit`, `both` |
+| `--webpack`     | Include webpack setup             | Flag (no value)                       |
+
 
 ### Examples
 
 **Payment gateway with Pro:**
+
 ```bash
 wptravelengine-addon-starter make:addon \
   --name="Razorpay Payment" \
@@ -258,6 +340,7 @@ wptravelengine-addon-starter make:addon \
 ```
 
 **Basic addon with global settings:**
+
 ```bash
 wptravelengine-addon-starter make:addon \
   --name="Extra Services" \
@@ -267,6 +350,7 @@ wptravelengine-addon-starter make:addon \
 ## What Gets Generated
 
 ### Payment Gateway Addons
+
 - Main plugin file with WordPress headers
 - Plugin class with singleton pattern
 - Payment gateway class extending `WPTravelEngine\PaymentGateways\BaseGateway`
@@ -277,6 +361,7 @@ wptravelengine-addon-starter make:addon \
 - README template
 
 ### Basic Addons
+
 - Main plugin file
 - Plugin class
 - Conditional settings (global/trip-edit/both)
@@ -292,18 +377,21 @@ wptravelengine-addon-starter make:addon \
 Add Composer's global bin directory to your PATH:
 
 **Linux/macOS (Bash):**
+
 ```bash
 echo 'export PATH="$HOME/.config/composer/vendor/bin:$PATH"' >> ~/.bashrc
 source ~/.bashrc
 ```
 
 **Linux/macOS (Zsh):**
+
 ```bash
 echo 'export PATH="$HOME/.config/composer/vendor/bin:$PATH"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
 **Linux/macOS (Fish):**
+
 ```bash
 set -Ux fish_user_paths $HOME/.config/composer/vendor/bin $fish_user_paths
 ```
@@ -311,11 +399,13 @@ set -Ux fish_user_paths $HOME/.config/composer/vendor/bin $fish_user_paths
 ### WP-CLI command not registered
 
 Ensure the package is installed:
+
 ```bash
 wp package list
 ```
 
 If not listed, reinstall:
+
 ```bash
 wp package install wptravelengine/addonstarter
 ```
@@ -323,6 +413,7 @@ wp package install wptravelengine/addonstarter
 ### Permission denied
 
 Make the binary executable:
+
 ```bash
 chmod +x ~/.config/composer/vendor/bin/wptravelengine-addon-starter
 ```
@@ -366,10 +457,13 @@ GPL-3.0-or-later
 ## Author
 
 **WP Travel Engine**
+
 - Website: [wptravelengine.com](https://wptravelengine.com)
-- Email: info@wptravelengine.com
+- Email: [info@wptravelengine.com](mailto:info@wptravelengine.com)
 
 ---
 
 **Made with ❤️ by WP Travel Engine Team**
+
 # wptravelengine-addon-starter
+

@@ -144,7 +144,7 @@ class Plugin {
 	 * @return string
 	 */
 	public function print_checkout_button( $label ): string {
-		$label = wptravelengine_settings()->get( '{{SETTINGS_KEY}}.button_label', __( '{{ADDON_NAME}}', '{{FULL_SLUG}}' ) );
+		$label = wptravelengine_settings()->get( '{{SETTINGS_KEY}}.pay_btn_label', __( '{{ADDON_NAME}}', '{{FULL_SLUG}}' ) );
 		return '<button class="wpte-checkout__form-submit-button">' . esc_html( $label ) . '</button>';
 	}
 

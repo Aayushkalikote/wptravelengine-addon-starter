@@ -26,6 +26,14 @@ return array(
 			'divider'    => true,
 		),
 		array(
+			'label'      => __( 'Pay Button Label', '{{FULL_SLUG}}' ),
+			'help'       => __( 'Label shown on the checkout pay button.', '{{FULL_SLUG}}' ),
+			'field_type' => 'TEXT',
+			'name'       => '{{SETTINGS_KEY}}.pay_btn_label',
+			'default'    => __( '{{TITLE}}', '{{FULL_SLUG}}' ),
+			'divider'    => true,
+		),
+		array(
 			'label'      => __( 'Public Key', '{{FULL_SLUG}}' ),
 			'help'       => __( 'Enter your public key from your payment gateway dashboard.', '{{FULL_SLUG}}' ),
 			'field_type' => 'TEXT',
