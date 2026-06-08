@@ -11,13 +11,7 @@
     ],
     "require": {
         "php": ">=7.4"{{PRO_CONFIG_DEPENDENCY}}
-    },
-    "require-dev": {
-        "squizlabs/php_codesniffer": "^3.5",
-        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
-        "phpcompatibility/phpcompatibility-wp": "*",
-        "wp-coding-standards/wpcs": "^3.1"
-    },
+    }{{PRO_CONFIG_REPOSITORY}},
     "autoload": {
         "psr-4": {
             "{{NAMESPACE}}\\": "includes/"

@@ -23,7 +23,7 @@ class MakeAddonCommand extends Command
         $helper = $this->getHelper('question');
 
         // 1. Addon name
-        $addonNameQuestion = new Question('Addon Name (e.g., "Stripe Payment Gateway" or "Trip Difficulty Level"): ');
+        $addonNameQuestion = new Question('Test Addon Name (e.g., "Stripe Payment Gateway" or "Trip Difficulty Level"): ');
         $addonName = trim($helper->ask($input, $output, $addonNameQuestion));
 
         // 2. Description
@@ -226,11 +226,15 @@ class MakeAddonCommand extends Command
         // Replace pro-compatible block
         if ($data['requires_pro']) {
             $proBlock = $this->getProCompatibleBlock($data);
+            $proWteHeader = ' * WTE: <addon_slug_id from wptravelengine.com>:{{ADDON_NAME}}';
         } else {
             $proBlock = $this->getStandaloneBlock($data);
+            $proWteHeader = '';
         }
 
         $mainStub = str_replace('{{PRO_COMPATIBLE_BLOCK}}', $proBlock, $mainStub);
+        $mainStub = str_replace('{{PRO_WTE_HEADER}}' . PHP_EOL, $proWteHeader === '' ? '' : $proWteHeader . PHP_EOL, $mainStub);
+        $mainStub = str_replace('{{PRO_WTE_HEADER}}', $proWteHeader, $mainStub);
 
         $mainContent = $this->replacePlaceholders($mainStub, $data);
         file_put_contents("$addonDir/{$data['names']['full_slug']}.php", $mainContent);
@@ -456,8 +460,16 @@ class MakeAddonCommand extends Command
         if ($data['requires_pro']) {
             $composerStub = str_replace('{{PRO_CONFIG_DEPENDENCY}}', ',
         "codewing-solutions/wptravelengine-pro-config": "dev-main"', $composerStub);
+            $composerStub = str_replace('{{PRO_CONFIG_REPOSITORY}}', ',
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:Codewing-Solutions/wptravelengine-pro-config.git"
+        }
+    ]', $composerStub);
         } else {
             $composerStub = str_replace('{{PRO_CONFIG_DEPENDENCY}}', '', $composerStub);
+            $composerStub = str_replace('{{PRO_CONFIG_REPOSITORY}}', '', $composerStub);
         }
         $composerContent = $this->replacePlaceholders($composerStub, $data);
         file_put_contents("$addonDir/composer.json", $composerContent);
@@ -467,7 +479,7 @@ class MakeAddonCommand extends Command
         if ($data['use_webpack']) {
             $packageStub = str_replace('{{WEBPACK_SCRIPTS}}', "\n        \"start\": \"npx wp-scripts start --mode development\",\n        \"build\": \"npx wp-scripts build --mode production\",", $packageStub);
             $packageStub = str_replace('{{WEBPACK_BUILD}}', " && npm run build", $packageStub);
-            $packageStub = str_replace('{{WEBPACK_DEV_DEPENDENCIES}}', "\n        \"@wordpress/scripts\": \"^30.5.1\",\n        \"lodash\": \"^4.17.21\",\n        \"react-hook-form\": \"~7.54.2\",", $packageStub);
+            $packageStub = str_replace('{{WEBPACK_DEV_DEPENDENCIES}}', "\n        \"@wordpress/scripts\": \"^30.5.1\",\n        \"lodash\": \"^4.17.21\",", $packageStub);
             $packageStub = str_replace('{{WEBPACK_DEPENDENCIES}}', ',
     "dependencies": {
         "@emotion/react": "^11.14.0",

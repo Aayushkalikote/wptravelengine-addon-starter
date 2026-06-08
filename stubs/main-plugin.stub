@@ -8,7 +8,9 @@
  * Requires at least: 5.9
  * Tested up to: 6.4
  * Requires PHP: 7.4
- * WTE requires at least: 6.0.0
+ * WTE tested up to: 6.8.0
+ * WTE Requires at least: 6.8.0
+{{PRO_WTE_HEADER}}
  * Text Domain: {{SLUG}}
  * Domain Path: /languages
  */
@@ -38,7 +40,7 @@ function {{FUNCTION_PREFIX}}_check_wte_active() {
 	}
 
 	// Check minimum version requirement
-	if ( version_compare( WP_TRAVEL_ENGINE_VERSION, '6.0.0', '<' ) ) {
+	if ( version_compare( WP_TRAVEL_ENGINE_VERSION, '6.8.0', '<' ) ) {
 		add_action( 'admin_notices', '{{FUNCTION_PREFIX}}_admin_notice' );
 		return false;
 	}
@@ -57,7 +59,7 @@ function {{FUNCTION_PREFIX}}_admin_notice() {
 			printf(
 				/* translators: %s: WP Travel Engine plugin link */
 				esc_html__( '{{ADDON_NAME}} requires %s to be installed and activated.', '{{SLUG}}' ),
-				'<a href="https://wordpress.org/plugins/wp-travel-engine/" target="_blank">' . esc_html__( 'WP Travel Engine Version 6.0.0 or higher', '{{SLUG}}' ) . '</a>'
+				'<a href="https://wordpress.org/plugins/wp-travel-engine/" target="_blank">' . esc_html__( 'WP Travel Engine Version 6.8.0 or higher', '{{SLUG}}' ) . '</a>'
 			);
 			?>
 		</p>
@@ -98,10 +100,10 @@ function {{FUNCTION_PREFIX}}_activate() {
 		);
 	}
 
-	if ( version_compare( WP_TRAVEL_ENGINE_VERSION, '6.0.0', '<' ) ) {
+	if ( version_compare( WP_TRAVEL_ENGINE_VERSION, '6.8.0', '<' ) ) {
 		deactivate_plugins( plugin_basename( __FILE__ ) );
 		wp_die(
-			esc_html__( '{{ADDON_NAME}} requires WP Travel Engine version 6.0.0 or higher.', '{{SLUG}}' ),
+			esc_html__( '{{ADDON_NAME}} requires WP Travel Engine version 6.8.0 or higher.', '{{SLUG}}' ),
 			esc_html__( 'Plugin Activation Error', '{{SLUG}}' ),
 			array( 'back_link' => true )
 		);

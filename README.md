@@ -16,7 +16,7 @@ A powerful Composer package to quickly scaffold WP Travel Engine addon plugins w
 
 - PHP 7.4 or higher (PHP 8.0+ recommended)
 - Composer 2.0 or higher
-- WP Travel Engine 6.0.0 or higher (for generated addons)
+- WP Travel Engine 6.8.0 or higher (for generated addons)
 
 **Note**: While this package supports PHP 7.4+, PHP 8.0 or higher is recommended for better performance and compatibility.
 
@@ -427,6 +427,14 @@ chmod +x ~/.config/composer/vendor/bin/wptravelengine-addon-starter
 
 ## Changelog
 
+### 0.0.3
+
+- New Feature: Added Pro config Composer repository for Pro-compatible addon scaffolds.
+- New Feature: Added Pro addon WTE header with placeholder marketplace ID and generated addon name.
+- Changed: Generated addon headers now require and test against WP Travel Engine 6.8.0.
+- Changed: Removed PHPCS packages from generated addon `composer.json` stubs.
+- Changed: Removed `react-hook-form` from generated package dependencies and used the WP Travel Engine webpack external instead.
+
 ### 0.0.2 – 28th May 2026
 
 - New Feature: Added GitHub release workflow stub generated per addon, with optional Composer authentication step for Pro-compatible addons.
@@ -466,4 +474,3 @@ GPL-3.0-or-later
 **Made with ❤️ by WP Travel Engine Team**
 
 # wptravelengine-addon-starter
-
