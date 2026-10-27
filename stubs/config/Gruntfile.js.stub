@@ -8,6 +8,8 @@ module.exports = function(grunt) {
         '{{FULL_SLUG}}.php',
         'index.php',
         'README.md',
+        'readme.txt',
+        'LICENSE.txt',
     ]
 
     grunt.initConfig({

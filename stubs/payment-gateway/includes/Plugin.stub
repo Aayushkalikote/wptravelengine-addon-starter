@@ -40,7 +40,22 @@ class Plugin {
 	 * Constructor.
 	 */
 	private function __construct() {
+		if ( ! \wptravelengine_{{FUNCTION_SLUG}}_check_compatibility() ) {
+			return;
+		}
+		$this->define_constants();
 		$this->init_hooks();
+	}
+
+	/**
+	 * Define plugin constants.
+	 *
+	 * @return void
+	 */
+	private function define_constants() {
+		defined( 'WPTRAVELENGINE_{{CONSTANT}}_PATH' ) || define( 'WPTRAVELENGINE_{{CONSTANT}}_PATH', dirname( WPTRAVELENGINE_{{CONSTANT}}_FILE ) );
+		defined( 'WPTRAVELENGINE_{{CONSTANT}}_DIR_URL' ) || define( 'WPTRAVELENGINE_{{CONSTANT}}_DIR_URL', plugin_dir_url( WPTRAVELENGINE_{{CONSTANT}}_FILE ) );
+		defined( 'WPTRAVELENGINE_{{CONSTANT}}_DIR_PATH' ) || define( 'WPTRAVELENGINE_{{CONSTANT}}_DIR_PATH', plugin_dir_path( WPTRAVELENGINE_{{CONSTANT}}_FILE ) );
 	}
 
 	/**
@@ -77,7 +92,7 @@ class Plugin {
 		load_plugin_textdomain(
 			'{{FULL_SLUG}}',
 			false,
-			plugin_basename( WPTRAVELENGINE_{{CONSTANT}}_FILE_PATH ) . '/languages/'
+			dirname( plugin_basename( WPTRAVELENGINE_{{CONSTANT}}_FILE ) ) . '/languages/'
 		);
 	}
 
@@ -90,7 +105,7 @@ class Plugin {
 			// Enqueue custom PayZen handler.
 			wp_enqueue_script(
 				'wptravelengine-payzen-handler',
-				plugin_dir_path( WPTRAVELENGINE_{{CONSTANT}}_FILE_PATH ) . 'src/js/index.js',
+				WPTRAVELENGINE_{{CONSTANT}}_DIR_URL . 'src/js/index.js',
 				array(),
 				WPTRAVELENGINE_{{CONSTANT}}_VERSION,
 				true
@@ -155,7 +170,7 @@ class Plugin {
 	 * @return array
 	 */
 	public function add_global_settings( $tab_settings ): array {
-		$settings_tab = include plugin_dir_path( WPTRAVELENGINE_{{CONSTANT}}_FILE_PATH ) . 'includes/Builders/global-settings.php';
+		$settings_tab = include WPTRAVELENGINE_{{CONSTANT}}_DIR_PATH . 'includes/Builders/global-settings.php';
 		$tab_settings['sub_tabs'][] = $settings_tab;
 		return $tab_settings;
 	}

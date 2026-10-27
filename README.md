@@ -16,7 +16,7 @@ A powerful Composer package to quickly scaffold WP Travel Engine addon plugins w
 
 - PHP 7.4 or higher (PHP 8.0+ recommended)
 - Composer 2.0 or higher
-- WP Travel Engine 6.8.0 or higher (for generated addons)
+- Internet access to wordpress.org when scaffolding (generated addons require and test against the latest WP Travel Engine release; falls back to 6.8.0 offline)
 
 **Note**: While this package supports PHP 7.4+, PHP 8.0 or higher is recommended for better performance and compatibility.
 
@@ -36,9 +36,11 @@ wp package install wptravelengine/addonstarter
 wp package install https://github.com/Aayushkalikote/wptravelengine-addon-starter.git
 ```
 
+Then use the `wptravelengine-addon-starter` command from your terminal.
+
 ### Method 2: Global Composer Command (Recommended for Package Developers)
 
-This package is **not published on Packagist**. Install it globally from the private GitHub repository as a VCS source.
+This package is **not published on Packagist**. Install it globally from the GitHub repository as a VCS source.
 
 **Step 1 — Register the VCS repository in your global Composer config:**
 
@@ -164,6 +166,9 @@ wptravelengine-paystack-payment/
 ├── composer.json                         # Composer config
 ├── package.json                          # NPM config
 ├── phpcs.xml                            # Coding standards
+├── LICENSE.txt                          # GPLv2 (bundled in zip)
+├── .wpte-tools/                         # metadata.yml + changelog.yml for release sync
+├── .github/workflows/release.yml        # prepare-addon, release, EDD deploy
 └── includes/
     ├── Plugin.php                       # Main plugin class
     ├── Payment.php                      # Payment gateway class
@@ -194,6 +199,10 @@ wptravelengine-trip-difficulty-level/
 ├── composer.json
 ├── package.json
 ├── phpcs.xml
+├── LICENSE.txt
+├── .wpte-tools/
+│   ├── metadata.yml
+│   └── changelog.yml
 ├── webpack.config.js
 ├── includes/
 │   ├── Plugin.php
@@ -460,8 +469,8 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/wptravelengine/wptravelengine-addon-starter/issues)
-- **Documentation**: [GitHub Wiki](https://github.com/wptravelengine/wptravelengine-addon-starter/wiki)
+- **Issues**: [GitHub Issues](https://github.com/Aayushkalikote/wptravelengine-addon-starter/issues)
+- **Documentation**: [GitHub Wiki](https://github.com/Aayushkalikote/wptravelengine-addon-starter/wiki)
 
 ## License
 
@@ -477,5 +486,3 @@ GPL-3.0-or-later
 ---
 
 **Made with ❤️ by WP Travel Engine Team**
-
-# wptravelengine-addon-starter

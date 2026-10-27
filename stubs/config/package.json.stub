@@ -5,7 +5,7 @@
     "main": "{{FULL_SLUG}}.php",
     "repository": "https://github.com/Codewing-Solutions/{{FULL_SLUG}}",
     "author": "wptravelengine",
-    "license": "GPL-3.0-or-later",
+    "license": "GPL-2.0-or-later",
     "scripts": {{{WEBPACK_SCRIPTS}}
         "i18n": "npx grunt addtextdomain && wp i18n make-pot . ./languages/{{FULL_SLUG}}.pot --exclude=vendor,node_modules,dist,bundle,build,bin,tests,languages --allow-root && cp ./languages/{{FULL_SLUG}}.pot ./languages/{{FULL_SLUG}}.po && wp i18n make-json ./languages --no-purge --allow-root",
         "bundle": "composer install --no-dev --optimize-autoloader{{WEBPACK_BUILD}} && npm run i18n && npx grunt bundle"

@@ -1,0 +1,50 @@
+# ================================================
+# PLUGIN IDENTIFICATION & CORE META
+# ================================================
+plugin:
+  id: # TODO: EDD download ID
+  slug: {{META_SLUG}}
+  name: "WP Travel Engine - {{ADDON_NAME}}"
+  uri: "https://wptravelengine.com"
+  version: "1.0.0"
+  version_const: "WPTRAVELENGINE_{{CONSTANT}}_VERSION"
+  license_key: "{{LICENSE_KEY}}"
+  author: "WP Travel Engine"
+  author_uri: "https://wptravelengine.com"
+  contributors: ['wptravelengine']
+  text_domain: "{{FULL_SLUG}}"
+  entry_file: "{{FULL_SLUG}}.php"
+
+# ================================================
+# SYSTEM & COMPATIBILITY REQUIREMENTS
+# ================================================
+requirements:
+  wp_required_ver: "{{WP_REQUIRED_VER}}"
+  wp_required_php: "7.4"
+  wp_tested_upto: "6.4"
+  wp_required_plugins:
+    - "wp-travel-engine"
+  wpte_required_ver: "{{WTE_VERSION}}"
+  wpte_tested_upto: "{{WTE_VERSION}}"
+
+# ================================================
+# LICENSING & TAGS
+# ================================================
+licensing:
+  license: "GPL-2.0+"
+  license_uri: "https://www.gnu.org/licenses/gpl-2.0.html"
+
+tags:
+  - "travel"
+  - "tour"
+  - "booking"
+  - "trip"
+
+# ================================================
+# PLUGIN CONTENT & DOCUMENTATION
+# ================================================
+description:
+  summary: "{{DESCRIPTION}}"
+  overview: "{{DESCRIPTION}}"
+  faqs: []
+  screenshots: []

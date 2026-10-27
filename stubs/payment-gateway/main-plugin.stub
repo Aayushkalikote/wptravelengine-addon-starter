@@ -1,6 +1,7 @@
 <?php
 /**
  * Plugin Name: WP Travel Engine - {{ADDON_NAME}}
+ * Plugin URI: https://wptravelengine.com
  * Description: {{DESCRIPTION}}
  * Version: 1.0.0
  * Author: WP Travel Engine
@@ -8,11 +9,12 @@
  * Requires at least: 5.9
  * Tested up to: 6.4
  * Requires PHP: 7.4
- * WTE tested up to: 6.8.0
- * WTE Requires at least: 6.8.0
+ * WTE tested up to: {{WTE_VERSION}}
+ * WTE Requires at least: {{WTE_VERSION}}
 {{PRO_WTE_HEADER}}
  * Text Domain: {{FULL_SLUG}}
  * Domain Path: /languages
+ * Requires Plugins: wp-travel-engine
  */
 
 // Exit if accessed directly.
@@ -20,11 +22,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WPTRAVELENGINE_{{CONSTANT}}_VERSION', '1.0.0' );
-define( 'WPTRAVELENGINE_{{CONSTANT}}_FILE_PATH', __FILE__ );
-define( 'WPTRAVELENGINE_{{CONSTANT}}_ABSPATH', __DIR__ . '/' );
+defined( 'WPTRAVELENGINE_{{CONSTANT}}_VERSION' ) || define( 'WPTRAVELENGINE_{{CONSTANT}}_VERSION', '1.0.0' );
+defined( 'WPTRAVELENGINE_{{CONSTANT}}_FILE' ) || define( 'WPTRAVELENGINE_{{CONSTANT}}_FILE', __FILE__ );
 
-require_once __DIR__ . '/vendor/autoload.php';
+require_once plugin_dir_path( WPTRAVELENGINE_{{CONSTANT}}_FILE ) . 'vendor/autoload.php';
 
 /**
  * Check if WP Travel Engine is active and meets version requirements.
@@ -38,7 +39,7 @@ function wptravelengine_{{FUNCTION_SLUG}}_check_compatibility() {
 	}
 
 	// Check minimum version requirement
-	if ( version_compare( WP_TRAVEL_ENGINE_VERSION, '6.8.0', '<' ) ) {
+	if ( version_compare( WP_TRAVEL_ENGINE_VERSION, '{{WTE_VERSION}}', '<' ) ) {
 		add_action( 'admin_notices', 'wptravelengine_{{FUNCTION_SLUG}}_admin_notice' );
 		return false;
 	}
@@ -57,7 +58,7 @@ function wptravelengine_{{FUNCTION_SLUG}}_admin_notice() {
 			printf(
 				/* translators: %s: WP Travel Engine plugin link */
 				esc_html__( 'WP Travel Engine - {{ADDON_NAME}} requires %s to be installed and activated.', '{{FULL_SLUG}}' ),
-				'<a href="https://wordpress.org/plugins/wp-travel-engine/" target="_blank">' . esc_html__( 'WP Travel Engine Version 6.8.0 or higher', '{{FULL_SLUG}}' ) . '</a>'
+				'<a href="https://wordpress.org/plugins/wp-travel-engine/" target="_blank">' . esc_html__( 'WP Travel Engine Version {{WTE_VERSION}} or higher', '{{FULL_SLUG}}' ) . '</a>'
 			);
 			?>
 		</p>

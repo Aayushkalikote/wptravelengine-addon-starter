@@ -12,19 +12,39 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect if tag is from next
+        id: from_next
+        run: |
+          git fetch origin '+refs/heads/*:refs/remotes/origin/*' --quiet
+          if git branch -r --contains HEAD | grep -qE '^[* ]*origin/next$'; then
+            echo "result=true" >> "$GITHUB_OUTPUT"
+            echo "branch=next" >> "$GITHUB_OUTPUT"
+          else
+            echo "result=false" >> "$GITHUB_OUTPUT"
+            branch=$(git branch -r --contains HEAD | grep -vE 'origin/(HEAD|next)( ->.*)?$' | head -n1 | sed 's#^[* ]*origin/##')
+            echo "branch=${branch}" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Checkout shared actions
         uses: actions/checkout@v4
         with:
           repository: Codewing-Solutions/wptravelengine
-          ref: next
+          ref: main
           token: ${{ secrets.ACCESS_TOKEN }}
           path: _wte_actions
-          sparse-checkout: .github/actions
+          sparse-checkout: |
+            .github/actions
+            .github/scripts
           sparse-checkout-cone-mode: false
 
       - name: Copy shared actions to workspace
-        run: cp -r _wte_actions/.github/actions/. .github/actions/
+        run: |
+          mkdir -p .github/actions .github/scripts
+          cp -r _wte_actions/.github/actions/. .github/actions/
+          cp -r _wte_actions/.github/scripts/. .github/scripts/
 
       # Step to set up PHP (if using Composer)
       - name: Setup PHP
@@ -47,13 +67,21 @@ jobs:
         with:
           node-version: '20'  # Specify your Node.js version
 
+      # Must run before stamp-version: sync-metadata writes package.json's version, which stamp-version reads.
+      - name: Prepare addon (sync metadata + readme changelog)
+        uses: ./.github/actions/prepare-addon
+        with:
+          target-branch: ${{ steps.from_next.outputs.branch }}
+
       - name: Stamp @since/@deprecated next
+        if: steps.from_next.outputs.result == 'true'
         uses: ./.github/actions/stamp-version
         with:
           commit-changes: ${{ contains(github.ref, '-rc') }}
+          target-branch: ${{ steps.from_next.outputs.branch }}
 
       - name: Fix PHP formatting
-        if: github.event.base_ref == 'refs/heads/next'
+        if: steps.from_next.outputs.result == 'true'
         uses: ./.github/actions/fix-php
 
       # Optional: If your plugin is using composer dependencies, we want to include them
@@ -61,7 +89,6 @@ jobs:
       - name: Build
         run: |
           yarn install
-          yarn build
           yarn bundle
 
       - name: Read package.json
@@ -99,3 +126,19 @@ jobs:
           body: |
             Release ${{ env.PACKAGE_VERSION }}
           prerelease: ${{ env.is_prerelease == 'true' }}
+          generate_release_notes: true
+
+      # Must run after the release step, so the zip is attached before dispatching.
+      - name: Maybe Deploy Release
+        env:
+          GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          ADDON_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -uo pipefail
+
+          # shellcheck source=/dev/null
+          source .github/scripts/deploy-addon/dispatch.sh
+
+          wpte_maybe_dispatch \
+            "$ADDON_REPO" "$TAG" "${PACKAGE_VERSION:-}" "${is_prerelease:-false}" || exit 1

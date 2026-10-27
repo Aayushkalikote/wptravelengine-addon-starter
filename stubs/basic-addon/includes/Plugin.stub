@@ -49,8 +49,20 @@ final class Plugin {
 			add_action( 'admin_notices', array( $this, 'admin_notice' ) );
 			return;
 		}
+		$this->define_constants();
 		$this->load_textdomain();
 		$this->register_hooks();
+	}
+
+	/**
+	 * Define plugin constants.
+	 *
+	 * @return void
+	 */
+	private function define_constants() {
+		defined( 'WPTRAVELENGINE_{{CONSTANT}}_PATH' ) || define( 'WPTRAVELENGINE_{{CONSTANT}}_PATH', dirname( WPTRAVELENGINE_{{CONSTANT}}_FILE ) );
+		defined( 'WPTRAVELENGINE_{{CONSTANT}}_DIR_URL' ) || define( 'WPTRAVELENGINE_{{CONSTANT}}_DIR_URL', plugin_dir_url( WPTRAVELENGINE_{{CONSTANT}}_FILE ) );
+		defined( 'WPTRAVELENGINE_{{CONSTANT}}_DIR_PATH' ) || define( 'WPTRAVELENGINE_{{CONSTANT}}_DIR_PATH', plugin_dir_path( WPTRAVELENGINE_{{CONSTANT}}_FILE ) );
 	}
 
 	/**
@@ -85,7 +97,7 @@ final class Plugin {
 	 * @return void
 	 */
 	private function load_textdomain() {
-		load_plugin_textdomain( '{{FULL_SLUG}}', false, WPTRAVELENGINE_{{CONSTANT}}_DIR_PATH . '/languages/' );
+		load_plugin_textdomain( '{{FULL_SLUG}}', false, dirname( plugin_basename( WPTRAVELENGINE_{{CONSTANT}}_FILE ) ) . '/languages/' );
 	}
 {{ADD_GLOBAL_SETTINGS_METHOD}}{{ADD_TRIP_META_METHOD}}
 }

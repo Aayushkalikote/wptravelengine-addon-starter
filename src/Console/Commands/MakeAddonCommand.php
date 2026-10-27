@@ -42,7 +42,7 @@ class MakeAddonCommand extends Command
         $proCompatQuestion = new ChoiceQuestion(
             'Does this addon require WP Travel Engine Pro compatibility?',
             ['no', 'yes'],
-            0
+            1
         );
         $requiresPro = $helper->ask($input, $output, $proCompatQuestion) === 'yes';
 
@@ -62,7 +62,7 @@ class MakeAddonCommand extends Command
             $webpackQuestion = new ChoiceQuestion(
                 'Does this addon require Webpack configuration?',
                 ['no', 'yes'],
-                0
+                1
             );
             $useWebpack = $helper->ask($input, $output, $webpackQuestion) === 'yes';
         } else {
@@ -81,6 +81,7 @@ class MakeAddonCommand extends Command
             'settings_type' => $settingsType,
             'use_webpack'   => $useWebpack,
             'names'         => $names,
+            'wte_version'   => self::fetchWteVersion($output),
         ];
 
         $output->writeln("\n<info>✅ Addon Configuration:</info>");
@@ -92,11 +93,31 @@ class MakeAddonCommand extends Command
         $output->writeln(sprintf("  <comment>Webpack:</comment> %s", $useWebpack ? 'Yes' : 'No'));
         $output->writeln(sprintf("  <comment>Full Slug:</comment> %s", $names['full_slug']));
         $output->writeln(sprintf("  <comment>Namespace:</comment> %s", $names['namespace']));
+        $output->writeln(sprintf("  <comment>WP Travel Engine:</comment> %s", $data['wte_version']));
 
         // Generate addon files
         $this->generateAddonFiles($data, $output);
 
         return Command::SUCCESS;
+    }
+
+    /**
+     * Fetch the latest WP Travel Engine version from wordpress.org, used for the
+     * generated "WTE tested up to" / "WTE requires at least" values.
+     */
+    public static function fetchWteVersion(OutputInterface $output): string
+    {
+        $fallback = '6.8.0';
+        $context = stream_context_create(['http' => ['timeout' => 5]]);
+        $json = @file_get_contents('https://api.wordpress.org/plugins/info/1.0/wp-travel-engine.json', false, $context);
+        $version = $json ? (json_decode($json, true)['version'] ?? '') : '';
+
+        if (!is_string($version) || !preg_match('/^\d+(\.\d+)*$/', $version)) {
+            $output->writeln("<comment>⚠️  Could not fetch latest WP Travel Engine version from wordpress.org, using {$fallback}.</comment>");
+            return $fallback;
+        }
+
+        return $version;
     }
 
     /**
@@ -523,8 +544,40 @@ class MakeAddonCommand extends Command
         $gitignoreStub = file_get_contents("$stubsPath/config/.gitignore.stub");
         file_put_contents("$addonDir/.gitignore", $gitignoreStub);
 
+        // LICENSE.txt
+        copy("$stubsPath/config/LICENSE.txt.stub", "$addonDir/LICENSE.txt");
+
+        // .wpte-tools/metadata.yml + changelog.yml
+        $this->generateWpteTools($addonDir, $stubsPath, $data);
+
         // .github/workflows/release.yml
         $this->generateReleaseWorkflow($addonDir, $stubsPath, $data);
+    }
+
+    /**
+     * Generate .wpte-tools/metadata.yml and changelog.yml, consumed by the release
+     * workflow's prepare-addon step. Values mirror the generated entry file + readme.txt.
+     */
+    private function generateWpteTools(string $addonDir, string $stubsPath, array $data)
+    {
+        $filesystem = new Filesystem();
+        $filesystem->mkdir("$addonDir/.wpte-tools");
+
+        $metadataStub = file_get_contents("$stubsPath/config/wpte-tools/metadata.yml.stub");
+        $metadataStub = strtr($metadataStub, [
+            // slug comes from the wptravelengine_pro_config() call, only present for pro addons.
+            '{{META_SLUG}}'       => $data['requires_pro'] ? "\"{$data['names']['full_slug']}\"" : '# TODO: no wptravelengine_pro_config() slug key in entry file',
+            '{{WP_REQUIRED_VER}}' => $data['is_gateway'] ? '5.9' : '6.3.9',
+            '{{LICENSE_KEY}}'     => str_replace('-', '_', $data['names']['full_slug']) . '_license',
+        ]);
+
+        // Values land inside YAML double-quoted strings.
+        $yamlData = $data;
+        $yamlData['addon_name'] = addcslashes($data['addon_name'], '"\\');
+        $yamlData['description'] = addcslashes($data['description'], '"\\');
+        file_put_contents("$addonDir/.wpte-tools/metadata.yml", $this->replacePlaceholders($metadataStub, $yamlData));
+
+        copy("$stubsPath/config/wpte-tools/changelog.yml.stub", "$addonDir/.wpte-tools/changelog.yml");
     }
 
     /**
@@ -667,6 +720,7 @@ add_action( 'plugins_loaded', 'wptravelengine_{$data['names']['function_slug']}_
             '{{SETTINGS_KEY}}'  => $data['names']['settings_key'],
             '{{GATEWAY_ID}}'    => $data['names']['gateway_id'],
             '{{TITLE}}'         => $data['names']['title'],
+            '{{WTE_VERSION}}'   => $data['wte_version'],
         ];
 
         return strtr($content, $replacements);

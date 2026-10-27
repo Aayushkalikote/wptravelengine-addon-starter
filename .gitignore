@@ -17,3 +17,5 @@ setup-local-wp.sh
 composer.lock
 phpcs.xml
 vendor/
+
+graphify-out/

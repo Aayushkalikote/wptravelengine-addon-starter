@@ -89,7 +89,7 @@ class WPCLICommand {
         $requires_pro = isset( $assoc_args['pro'] );
 
         if ( !isset( $assoc_args['pro'] ) ) {
-            $pro_choice = $this->choice( 'Does this addon require WP Travel Engine Pro compatibility?', ['no', 'yes'], 0 );
+            $pro_choice = $this->choice( 'Does this addon require WP Travel Engine Pro compatibility?', ['no', 'yes'], 1 );
             $requires_pro = ( $pro_choice === 'yes' );
         }
 
@@ -113,7 +113,7 @@ class WPCLICommand {
         $use_webpack = isset( $assoc_args['webpack'] );
 
         if ( !isset( $assoc_args['webpack'] ) && !$is_gateway ) {
-            $webpack_choice = $this->choice( 'Does this addon require Webpack configuration?', ['no', 'yes'], 0 );
+            $webpack_choice = $this->choice( 'Does this addon require Webpack configuration?', ['no', 'yes'], 1 );
             $use_webpack = ( $webpack_choice === 'yes' );
         }
 
@@ -128,6 +128,7 @@ class WPCLICommand {
             'settings_type' => $settings_type,
             'use_webpack'   => $use_webpack,
             'names'         => $names,
+            'wte_version'   => \WPTravelEngine\AddonStarter\Console\Commands\MakeAddonCommand::fetchWteVersion( new \Symfony\Component\Console\Output\ConsoleOutput() ),
         ];
 
         // Display configuration
@@ -138,6 +139,7 @@ class WPCLICommand {
         WP_CLI::log( "  Settings: {$settings_type}" );
         WP_CLI::log( "  Webpack: " . ( $use_webpack ? 'Yes' : 'No' ) );
         WP_CLI::log( "  Slug: {$names['full_slug']}" );
+        WP_CLI::log( "  WP Travel Engine: {$data['wte_version']}" );
 
         // Generate addon in plugins directory
         $addon_dir = $plugins_dir . '/' . $names['full_slug'];
